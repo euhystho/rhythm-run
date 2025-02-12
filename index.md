@@ -9,7 +9,7 @@ This app helps runners create structured workouts by analyzing the BPM (beats pe
 **Q**: Can I use my own music?
 Yes! The app will analyze the BPM of any songs the user uploads and organize them to create a workout playlist based on them.
 
-Q: Will the app work with streaming services like Spotify and Apple Music?
+**Q**: Will the app work with streaming services like Spotify and Apple Music?
 The app’s later versions may include integration with various streaming services, but the minimum version will require uploads from local files.
 
 ### Music and Playlists:

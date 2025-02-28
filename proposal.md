@@ -1,4 +1,7 @@
-## Proposal 
+---
+title: "Proposal"
+---
+
 **Group Members:** Khoi Nguyen, Michael Santella, Mia Sideris, Isabelle Son, and Eugene Thompson
 
 **Date:** February 5th, 2025

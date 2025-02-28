@@ -12,7 +12,7 @@ title: "Proposal"
 
 The following is a proposal to design and implement a music-centered endurance running application. We outline the need, the functional description, the environment and implementation details, and the corresponding business model identifying our schedule and resources required to successfully create this application.
 
-# Why is Pacing so Important?
+## Why is Pacing so Important?
 
 Whether you are a first-time runner or an elite marathon athlete, pacing runs remains one of the most difficult aspects of endurance running. Knowing how to pace runs effectively is imperative to avoiding injury and upholding long-term goals in the sport. "Pacing" refers to the overall speed at which a runner will cover a specific distance. A runner's pace will alter depending on the desired distance--upholding a 5-minute mile pace may be achievable for a singular mile, but attempting to run 8 miles at this speed requires exceptional talent! Endurance runners often set out to achieve their fastest times by breaking down their "splits," or dividing their run into small portions to gauge performance incrementally. For example, if the goal is to run an 18-minute 5k, the necessary split per mile would be 5:48.39. The challenge resides in the runner's ability to accurately perceive their desired splits during a race, or even a typically easy jog. Of course, most runners may be able to roughly estimate their paces during a run, but keeping mental track of the exact paces is impossible. Misinterpreting an 8:30 mile for an 8:49 mile can easily make or break one's personal goals. Additionally, it is frequent for less-experienced runners to push the pace faster in the beginning of a run, but significantly slow down towards the end. Effectively gauging pace can prevent "running out of fuel" at the end of a run and make the overall running experience feel more feasible and the individual less susceptible to injury. Thus, RhythmRun will offer a unique, entertaining, and engaging way for runners of all levels, regardless of their goals, to make the process of achieving consistency straightforward!
 
@@ -22,7 +22,7 @@ The program is designed to cater to a wide range of users, from complete beginne
 
 Accessibility is a key focus of RhythmRun. With just a basic tracking device, such as a smartwatch or fitness tracker paired with a smartphone, users can seamlessly integrate the app into their running routine. The app adapts to individual preferences and fitness levels, offering personalized music playlists, tempo-based coaching, and real-time feedback to keep users motivated and on track. Whether someone is training for a marathon, improving their fitness, or simply looking to enjoy a more engaging running experience, RhythmRun is designed to meet their needs and help them achieve their goals efficiently and enjoyably.
 
-## Roles and Technical Expertise:
+# Roles and Technical Expertise:
 
 Below are the initial roles starting from February 10th to March 3rd.
 

@@ -3,6 +3,10 @@ RhythmRun is intended to be a fully functional app that runners of all experienc
 
 ## Links to Reports:
 [Proposal](/proposal.md)
+[Requirements](requirements.md)
+[Design](/design.md)
+[Test Plan](/test_plan.md)
+[Final Documentation](documentation.md)
 
 ## FAQs
 ### General Questions:

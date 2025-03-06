@@ -2,13 +2,13 @@
 RhythmRun is intended to be a fully functional app that runners of all experience levels can utilize throughout the duration of an endurance-based training session. Users will have the ability to upload their own personalized music playlist directly from Apple Music or Spotify, and RhythmRun will analyze, organize, and match each song’s frequency according to the user’s desired pace range. The inputted playlist will be sorted by intensity level relative to the runner’s aerobic abilities, which runners can then utilize in their day-to-day workouts. More specifically, RhythmRun eliminates the difficulties associated with not knowing the “feeling” of a certain pace range and acts as a motivational tool to encourage users to stay on track with their long-term goals, whether it be consistency or speed-oriented. Above all, RhythmRun stands as a reminder that there does not have to be a trade-off between music preference and current pace level. Instead, users will have the capacity to enjoy their favorite catchy tunes, all while ensuring productivity and safety during every race, run, jog, or fast-paced walk!
 
 ## Links to Reports:
-[Proposal](/proposal.md)
+[Proposal](proposal.md)
 
 [Requirements](requirements.md)
 
-[Design](/design.md)
+[Design](design.md)
 
-[Test Plan](/test_plan.md)
+[Test Plan](test_plan.md)
 
 [Final Documentation](documentation.md)
 

@@ -40,7 +40,8 @@ The RhythmRun application runs under the assumptions and dependencies laid out i
 ## 3. System Architecture Overview
 
 ### 3.1 Functional Design
-![A UML diagram showing the entire RhythmRun app with all the classes](figures/birdseye.jpeg "Figure 1: RhythmRun Data Schema Diagram")
+![A UML diagram showing the entire RhythmRun app with all the classes](figures/birdseye.jpeg)
+<p style="text-align: center;">Figure 1: RhythmRun Data Schema Diagram</p>
 
 ### 3.2 Local Storage
 
@@ -86,7 +87,10 @@ The RhythmRun application runs under the assumptions and dependencies laid out i
   - **play()**
     - Pre-conditions: Checks if there is no music currently playing
     - Post-conditions: Plays the most recently played song
-![UML Diagram of a Client-server architecture of the Spotify and Apple Music API and their relationship with the RhythmRun app](figures/music.jpeg "Figure 2: Music API Schema")
+
+![UML Diagram of a Client-server architecture of the Spotify and Apple Music API and their relationship with the RhythmRun app](figures/music.jpeg)
+<p style="text-align: center;">Figure 2: Music API Schema</p>
+
 ### 3.5 Apple Watch
 
 - Methods:

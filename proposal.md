@@ -4,7 +4,7 @@ title: "Proposal"
 
 **Group Members:** Khoi Nguyen, Michael Santella, Mia Sideris, Isabelle Son, and Eugene Thompson
 
-**Last Updated** March 6th, 2025
+**Last Updated:** March 6th, 2025
 
 **Application Name:** RhythmRun: A proposal to design and implement a music-centered endurance running application
 

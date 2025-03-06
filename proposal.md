@@ -81,11 +81,11 @@ Some of the potential technical obstacles are API integration with popular music
 
 | Rotation Periods | Project Lead | Document Lead | Scrum Lead | Code Lead | Administrative Assistant |
 |------------------|--------------|--------------|------------|-----------|--------------------------|
-| February 10 to March 3 | Isabelle | Mia | Khoi | Eugene | Michael |
-| March 3 to 7; March 17 to 21 | Eugene | Michael | Mia | Khoi | Isabelle |
-| March 24 to April 7 | Michael | Eugene | Isabelle | Mia | Khoi |
-| April 7 to April 28 | Mia | Khoi | Michael | Isabelle | Eugene |
-| April 28 to May 8 | Khoi | Isabelle | Eugene | Michael | Mia |
+| February 10 to March 8 | Isabelle | Mia | Khoi | Eugene | Michael |
+| March 16 to 29 | Eugene | Michael | Mia | Khoi | Isabelle |
+| March 30 to April 12 | Michael | Eugene | Isabelle | Mia | Khoi |
+| April 13 to April 26 | Mia | Khoi | Michael | Isabelle | Eugene |
+| April 27 to May 10 | Khoi | Isabelle | Eugene | Michael | Mia |
 
 ## Minimum Scope:
 

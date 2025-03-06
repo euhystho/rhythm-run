@@ -228,4 +228,4 @@ The RhythmRun application runs under the assumptions and dependencies laid out i
     - Pre-conditions: Check if one (and only one) playlist has been chosen for deletion
     - Post-conditions: One less playlist in the user's library
 
-[Link to the Project Requirements v1 PDF](/reports/Design.pdf)
+[Link to the Design Report v1 PDF](/reports/Design.pdf)

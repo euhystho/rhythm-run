@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:rhythm_run/spotify.dart';
 
 void main() {
   runApp(const MyApp());
@@ -16,7 +15,6 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         useMaterial3: true,
       ),
-      home: const SpotifySearchScreen(),
     );
   }
 }

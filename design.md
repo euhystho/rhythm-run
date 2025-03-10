@@ -88,7 +88,7 @@ The RhythmRun application runs under the assumptions and dependencies laid out i
     - Pre-conditions: Checks if there is no music currently playing
     - Post-conditions: Plays the most recently played song
 
-![UML Diagram of a Client-server architecture of the Spotify and Apple Music API and their relationship with the RhythmRun app](figures/music.jpeg)
+![UML Diagram of a Client-Server architecture of the Spotify and Apple Music API along with a Façade called Music API that makes it work inside the RhythmRun app](figures/music.jpeg)
 <p style="text-align: center;">Figure 2: Music API Schema</p>
 
 ### 3.5 Apple Watch

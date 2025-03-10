@@ -1,2 +1,11 @@
 # MacOS specific Folder Attributes:
 .DS_Store
+.dart_tool/package_config_subset
+buildServer.json
+.dart_tool/dartpad/web_plugin_registrant.dart
+.vscode/launch.json
+.vscode/.swift-format
+.vscode/settings.json
+.vscode/tasks.json
+.dart_tool/version
+.dart_tool/package_config.json

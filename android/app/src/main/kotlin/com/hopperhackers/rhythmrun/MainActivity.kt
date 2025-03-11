@@ -1,4 +1,4 @@
-package com.example.rhythm_run
+package com.hopperhackers.rhythmrun
 
 import io.flutter.embedding.android.FlutterActivity
 

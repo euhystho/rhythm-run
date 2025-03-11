@@ -8,14 +8,18 @@ echo "Running ci_post_clone.sh script..."
 echo "Current directory: $(pwd)"
 echo "Listing contents of current directory:"
 ls -la
-echo "Listing contents of ci_scripts directory:"
-ls -la ci_scripts/
 
-# Navigate to the Flutter project directory
+# Navigate to the Flutter project directory (repository root)
 cd "$CI_PRIMARY_REPOSITORY_PATH"
 
 # Print current directory again for debugging
 echo "Current directory after cd: $(pwd)"
+
+# Verify that we are in the Flutter project root
+if [ ! -f "pubspec.yaml" ]; then
+    echo "Error: pubspec.yaml not found in $(pwd). Are we in the correct directory?"
+    exit 1
+fi
 
 # Install Homebrew (if not already installed)
 if ! command -v brew >/dev/null; then

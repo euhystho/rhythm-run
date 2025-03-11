@@ -3,8 +3,8 @@
 # Fail this script if any subcommand fails.
 set -e
 
-# The default execution directory of this script is the ci_scripts directory.
-cd $CI_PRIMARY_REPOSITORY_PATH # change working directory to the root of your cloned repo.
+# Change to the repository root
+cd "$CI_PRIMARY_REPOSITORY_PATH"
 
 # Install Flutter using git.
 git clone https://github.com/flutter/flutter.git --depth 1 -b stable $HOME/flutter
@@ -12,15 +12,32 @@ export PATH="$PATH:$HOME/flutter/bin"
 
 # Install Flutter artifacts for iOS (--ios), or macOS (--macos) platforms.
 flutter precache --ios
-
-# Install Flutter dependencies.
+echo "Running flutter pub get..."
 flutter pub get
 
-# Install CocoaPods using Homebrew.
-HOMEBREW_NO_AUTO_UPDATE=1 # disable homebrew's automatic updates.
-brew install cocoapods
+# Install CocoaPods
+echo "Installing CocoaPods via Homebrew..."
+HOMEBREW_NO_AUTO_UPDATE=1 brew install cocoapods
 
-# Install CocoaPods dependencies.
-cd ios && pod install # run `pod install` in the `ios` directory.
+# Run pod install with error checking
+echo "Running pod install..."
+pod install || {
+    echo "Error: pod install failed."
+    exit 1
+}
+
+# Verify Pods_Runner framework existence
+echo "Checking for Pods_Runner framework..."
+if [ -d "Pods/Runner" ]; then
+    echo "Pods_Runner framework found at ios/Pods/Runner."
+    ls -la "Pods/Runner"
+else
+    echo "Error: Pods_Runner framework not found in ios/Pods."
+    exit 1
+fi
+
+# Ensure framework search paths (optional diagnostic step)
+echo "Pods directory contents:"
+ls -la Pods
 
 exit 0

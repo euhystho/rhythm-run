@@ -3,11 +3,19 @@
 # Exit on any error
 set -e
 
+# Print debug information to confirm script execution
+echo "Running ci_post_clone.sh script..."
+echo "Current directory: $(pwd)"
+echo "Listing contents of current directory:"
+ls -la
+echo "Listing contents of ci_scripts directory:"
+ls -la ci_scripts/
+
 # Navigate to the Flutter project directory
 cd "$CI_PRIMARY_REPOSITORY_PATH"
 
-# Print current directory for debugging
-echo "Current directory: $(pwd)"
+# Print current directory again for debugging
+echo "Current directory after cd: $(pwd)"
 
 # Install Homebrew (if not already installed)
 if ! command -v brew >/dev/null; then
@@ -51,3 +59,8 @@ if [ ! -f "ios/Flutter/Generated.xcconfig" ]; then
 else
     echo "Generated.xcconfig found successfully."
 fi
+
+# Navigate to the ios directory and run pod install
+echo "Running pod install..."
+cd ios
+pod install

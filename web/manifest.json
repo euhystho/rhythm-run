@@ -1,6 +1,6 @@
 {
-    "name": "rhythm_run",
-    "short_name": "rhythm_run",
+    "name": "rhythmrun",
+    "short_name": "rhythmrun",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

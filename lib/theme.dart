@@ -27,7 +27,7 @@ class RhythmRunTheme {
     onSurface: Colors.white
   );
 
-  static Color scaffoldBackgroundColor = Colors.transparent;
+  static Color scaffoldBackgroundColor = Color(0xFF333333);
   static const Color borderColor = Colors.transparent;
 
   // Spotify Colors
@@ -39,7 +39,6 @@ class RhythmRunTheme {
   // Theme Data
   static ThemeData get lightTheme {
     return ThemeData(
-      scaffoldBackgroundColor: lightScheme.surface,
       colorScheme: lightScheme,
       textTheme: TextTheme(
         displayLarge: GoogleFonts.contrailOne(
@@ -75,7 +74,6 @@ class RhythmRunTheme {
 
   static ThemeData get darkTheme {
     return ThemeData(
-      scaffoldBackgroundColor: darkScheme.surface,
       colorScheme: darkScheme,
       textTheme: TextTheme(
         displayLarge: GoogleFonts.contrailOne(

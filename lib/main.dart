@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'theme.dart';
+import 'file_upload_page.dart';
 
 // Welcome Page
 class WelcomePageWidget extends StatelessWidget {
@@ -101,6 +102,10 @@ class WelcomePageWidget extends StatelessWidget {
                   child: ElevatedButton.icon(
                     onPressed: () {
                       // TODO: Implement Local Account Creation
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => FileUploadPage()),
+                      );
                       print('Create Local Account');
                     },
                     icon: Icon(

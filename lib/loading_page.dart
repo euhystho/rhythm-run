@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'theme.dart';
 
 class LoadingPage extends StatefulWidget {
+  const LoadingPage({super.key});
+
   @override
   _LoadingPageState createState() => _LoadingPageState();
 }

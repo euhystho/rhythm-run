@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'loading_page.dart';
 import 'theme.dart';
-
+import 'localfilepicker.dart';
 class FileUploadPage extends StatefulWidget {
+  const FileUploadPage({super.key});
+
   @override
   _FileUploadPageState createState() => _FileUploadPageState();
 }
@@ -12,6 +14,9 @@ class _FileUploadPageState extends State<FileUploadPage> {
 
   // TODO: implement file picking
   void pickFiles() async {
+    //Khoi's pick files:
+    List<String> paths=await pickAudioFile();
+    selectedFiles.addAll(paths);
   }
 
   @override

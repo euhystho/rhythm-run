@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '4_experience_page.dart';
 import 'theme.dart';
 
 class LoadingPage extends StatefulWidget {
@@ -14,7 +15,22 @@ class _LoadingPageState extends State<LoadingPage> {
     super.initState();
     
     // TODO: implement BPM analysis here
-    // TODO: navigate to the user selection screen after processing
+    // TODO: navigate to the user selection screen after processing... TEMPORARY BUTTON BELOW
+    ElevatedButton(
+      onPressed: () {
+        Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => ExperienceLevelPage()),
+          );
+      },
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Theme.of(context).colorScheme.tertiary,
+      ),
+      child: Text("Experience (temp button)",
+          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                color: Theme.of(context).colorScheme.onTertiary,
+              )),
+    );
   }
 
   @override

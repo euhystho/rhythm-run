@@ -10,7 +10,7 @@ class FileUploadPage extends StatefulWidget {
 }
 
 class _FileUploadPageState extends State<FileUploadPage> {
-  List<String> selectedFiles = ["b"]; // placeholder for selected files
+  List<String> selectedFiles = [""]; // placeholder for selected files
 
   // TODO: implement file picking
   void pickFiles() async {

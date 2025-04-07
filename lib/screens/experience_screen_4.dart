@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '5_duration_page.dart';
-import 'theme.dart';
+import 'duration_screen_5.dart';
+import '../utils/theme.dart';
 
 class ExperienceLevelPage extends StatelessWidget {
   const ExperienceLevelPage({super.key});

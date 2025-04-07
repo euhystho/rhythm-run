@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'theme.dart';
+import '../utils/theme.dart';
 
 
 class IntensityPage extends StatelessWidget {

@@ -5,7 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 // RhythmRun Custom Theme
 class RhythmRunTheme {
   // Colors
-  static const Color primaryText = Colors.black;
+  static const Color primaryText = Colors.black87;
   static const Color primaryDarkModeText = Colors.white;
   static const Color headerText = Colors.transparent;
   static const Color secondaryText = Color(0xFF666666);
@@ -127,7 +127,7 @@ class ResponsiveText extends StatelessWidget {
   }
 }
 
-// Loading Indicator
+// Loading Indicator 
 Widget loadingIndicator(context) {
   return SpinKitPumpingHeart(color: Theme.of(context).colorScheme.primary, size: 50);
 }

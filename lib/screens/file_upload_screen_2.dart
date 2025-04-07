@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import '3_loading_page.dart';
-import 'theme.dart';
-import 'localfilepicker.dart';
+import 'loading_screen.dart';
+import '../services/localfilepicker.dart';
 class FileUploadPage extends StatefulWidget {
   const FileUploadPage({super.key});
 
@@ -24,19 +23,11 @@ class _FileUploadPageState extends State<FileUploadPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Upload Songs", style: Theme.of(context).textTheme.headlineSmall),
-        backgroundColor: RhythmRunTheme.scaffoldBackgroundColor,
+        backgroundColor: Theme.of(context).colorScheme.primary
       ),
       body: Container(
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              RhythmRunTheme.scaffoldBackgroundColor,
-              Theme.of(context).colorScheme.primary,
-            ],
-            stops: const [0, 1],
-            begin: AlignmentDirectional(0, 1),
-            end: AlignmentDirectional(0, -1),
-          ),
+          color: Theme.of(context).colorScheme.surface
         ),
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -48,9 +39,7 @@ class _FileUploadPageState extends State<FileUploadPage> {
                   backgroundColor: Theme.of(context).colorScheme.secondary,
                 ),
                 child: Text("Choose Files",
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          color: Theme.of(context).colorScheme.onSurface,
-                        )),
+                    style: Theme.of(context).textTheme.bodyLarge),
               ),
               Expanded(
                 child: ListView(
@@ -73,9 +62,7 @@ class _FileUploadPageState extends State<FileUploadPage> {
                     backgroundColor: Theme.of(context).colorScheme.tertiary,
                   ),
                   child: Text("Analyze BPM",
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            color: Theme.of(context).colorScheme.onTertiary,
-                          )),
+                      style: Theme.of(context).textTheme.bodyLarge),
                 ),
             ],
           ),

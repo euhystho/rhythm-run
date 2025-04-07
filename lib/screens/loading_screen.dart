@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '4_experience_page.dart';
-import 'theme.dart';
+import 'experience_screen_4.dart';
+import '../utils/theme.dart';
 
 class LoadingPage extends StatefulWidget {
   const LoadingPage({super.key});

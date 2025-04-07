@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import '6_intensity_page.dart';
-import 'theme.dart';
+import 'intensity_screen_6.dart';
+import '../utils/theme.dart';
 
+// THIS IS THE FIFTH PAGE (5)
 
 class DurationPage extends StatelessWidget {
   const DurationPage({super.key});

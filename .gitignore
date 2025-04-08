@@ -5,6 +5,8 @@
 *.swp
 .DS_Store
 .atom/
+.env
+api-keys.json
 .vscode/
 .build/
 .buildlog/
@@ -45,4 +47,9 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 ios/Podfile.lock
+<<<<<<< Updated upstream
 api-keys.json
+=======
+
+
+>>>>>>> Stashed changes

@@ -1,0 +1,16 @@
+COMMAND WORKING WITH EMULATOR
+
+1.shut down the device emulator
+adb -s device-id emu kill
+example: adb -s emulator-5554 emu kill
+--> shutdown the android emulator
+2.add the package:
+flutter pub add <name_of_the_package>
+3.select the emulator:
+flutter devices //verify the existed emulator
+    flutter run -d <device_id>
+    Or::
+    flutter emulators --launch <emulator_name>
+4.run the emulator:
+flutter build apk //if it is not built
+flutter run //run the emulator

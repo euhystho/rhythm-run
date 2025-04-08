@@ -70,7 +70,9 @@ dependencies:
   url_launcher_platform_interface: 2.3.2
   url_launcher_web: 2.4.0
   url_launcher_windows: 3.1.4
-  file_picker: ^10.0.0 #Khoi just add this dependency 04/06
+  file_picker: ^10.0.0 #Khoi just add this dependency 04/06/2025
+  audioplayers: ^6.4.0 #Khoi just add this dependency for audio player 04/06/2025
+  permission_handler: ^11.4.0
 
 dev_dependencies:
   flutter_test:
@@ -119,3 +121,5 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+  assets:
+      - assets/audio/

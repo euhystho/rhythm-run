@@ -192,6 +192,7 @@
 				3B06AD1E1E4923F5004D2608 /* Thin Binary */,
 				AA0122F3CF54F6C920F3C115 /* Frameworks */,
 				64635E7ADFFD2983A5076E20 /* [CP] Embed Pods Frameworks */,
+				14D823D0652CEDFB128D4B9F /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -263,6 +264,23 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		14D823D0652CEDFB128D4B9F /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		1E56169EB2CD5CDEB87A891C /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;

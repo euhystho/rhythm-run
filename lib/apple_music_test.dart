@@ -3,18 +3,14 @@ import 'dart:async';
 
 import 'package:music_kit/music_kit.dart';
 
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatefulWidget {
-  const MyApp({super.key});
+class AppleMusicPage extends StatefulWidget {
+  const AppleMusicPage({super.key});
 
   @override
-  State<MyApp> createState() => _MyAppState();
+  _AppleMusicPageState createState() => _AppleMusicPageState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _AppleMusicPageState extends State<AppleMusicPage> {
   final _musicKitPlugin = MusicKit();
   MusicAuthorizationStatus _status = MusicAuthorizationStatusNotDetermined();
   String? _developerToken = String?.fromEnvironment('APPL_MUSIC_DEV_TOKEN');
@@ -101,16 +97,6 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
-  Future<void> searchAndPlayAlbum() async {
-    try {
-      await _musicKitPlugin.setQueue("song", );
-      await _musicKitPlugin.play();
-
-    } catch (e) {
-      debugPrint('Error playing album: $e');
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -151,11 +137,6 @@ class _MyAppState extends State<MyApp> {
                     });
                   },
                   child: const Text('Request authorization')),
-              TextButton(
-                  onPressed: () async {
-                    await searchAndPlayAlbum();
-                  },
-                  child: const Text('Play Folklore')),
             ],
           ),
         ),

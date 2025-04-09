@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'temp_playlist_screen_7.dart';
 import '../utils/theme.dart';
 
 
@@ -39,7 +40,10 @@ class IntensityPage extends StatelessWidget {
               ElevatedButton(
                 onPressed: () {
                   // TODO: store that choice was beginner
-                  // navigate to next page
+                  Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => TempPlaylistPage()),
+                      );
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Theme.of(context).colorScheme.secondary,
@@ -56,7 +60,10 @@ class IntensityPage extends StatelessWidget {
               ElevatedButton(
                 onPressed: () {
                   // TODO: store that choice was beginner
-                  // navigate to next page
+                  Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => TempPlaylistPage()),
+                      );
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Theme.of(context).colorScheme.secondary,
@@ -73,7 +80,10 @@ class IntensityPage extends StatelessWidget {
               ElevatedButton(
                 onPressed: () {
                   // TODO: store that choice was beginner
-                  // navigate to next page
+                  Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => TempPlaylistPage()),
+                      );
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Theme.of(context).colorScheme.secondary,

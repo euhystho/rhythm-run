@@ -16,6 +16,7 @@ class RhythmRunTheme {
     secondary: Color(0xFF4A90E2),
     tertiary: Color(0xFF8e44ad),
     surface: Color(0xFFF9F9F9),
+    secondaryContainer: Color(0xFFFFFFFF),
     onSurface: Colors.black
   );
 
@@ -24,6 +25,7 @@ class RhythmRunTheme {
     secondary: Color(0xFF3B78D2),
     tertiary: Color(0xFF732D91),
     surface: Color(0xFF1C1C1C),
+    secondaryContainer: Color(0xFF2C2C2C),
     onSurface: Colors.white
   );
 
@@ -54,6 +56,7 @@ class RhythmRunTheme {
         bodyMedium: GoogleFonts.comfortaa(fontSize: 14, color: primaryText),
         bodyLarge: GoogleFonts.comfortaa(fontSize: 16, color: primaryText),
         titleSmall: GoogleFonts.contrailOne(fontSize: 16, color: primaryText),
+        titleLarge: GoogleFonts.contrailOne(fontSize: 24, color: primaryText)
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
@@ -89,6 +92,7 @@ class RhythmRunTheme {
         bodyMedium: GoogleFonts.comfortaa(fontSize: 14, color: primaryDarkModeText),
         bodyLarge: GoogleFonts.comfortaa(fontSize: 16, color: primaryDarkModeText),
         titleSmall: GoogleFonts.contrailOne(fontSize: 16, color: primaryDarkModeText),
+        titleLarge: GoogleFonts.contrailOne(fontSize: 24, color: primaryDarkModeText)
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(

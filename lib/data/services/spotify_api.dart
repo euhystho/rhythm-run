@@ -1,4 +1,3 @@
-import 'package:spotify_sdk/spotify_sdk.dart';
 
 class SpotifyAPI {
   final String clientID;

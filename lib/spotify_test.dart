@@ -10,38 +10,17 @@ import 'package:spotify_sdk/models/player_state.dart';
 import 'package:spotify_sdk/spotify_sdk.dart';
 import 'widgets/sized_icon_button.dart';
 
-Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Rhythm Run',
-      theme: ThemeData(
-        useMaterial3: true,
-        primarySwatch: Colors.blue,
-      ),
-      home: const Home(),
-    );
-  }
-}
-
 /// A [StatefulWidget] which uses:
 /// * [spotify_sdk](https://pub.dev/packages/spotify_sdk)
 /// to connect to Spotify and use controls.
-class Home extends StatefulWidget {
-  const Home({super.key});
+class SpotifyTest extends StatefulWidget {
+  const SpotifyTest({super.key});
 
   @override
-  HomeState createState() => HomeState();
+  SpotifyTestState createState() => SpotifyTestState();
 }
 
-class HomeState extends State<Home> {
+class SpotifyTestState extends State<SpotifyTest> {
   bool _loading = false;
   bool _connected = false;
   final Logger _logger = Logger(

@@ -22,7 +22,7 @@ class _LocalSongsUploadPageState extends State<LocalSongsUploadPage> {
     });
 
     try {
-      List<String> paths = await pickAudioFile();
+      Set<String> paths = await pickAudioFile();
       setState(() {
         selectedFiles.addAll(paths);
       });

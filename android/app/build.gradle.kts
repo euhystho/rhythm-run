@@ -28,6 +28,8 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        manifestPlaceholders["redirectSchemeName"] = "spotify-sdk"
+        manifestPlaceholders["redirectHostName"] = "auth"
     }
 
     buildTypes {
@@ -43,6 +45,8 @@ android {
 }
 dependencies{
     implementation ("org.slf4j:slf4j-android:1.7.36")
+    implementation(project(":spotify-app-remote"))
+    implementation("com.google.code.gson:gson:2.6.1")
 }
 
 flutter {

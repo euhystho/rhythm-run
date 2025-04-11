@@ -1,2 +1,8 @@
 -dontwarn org.apache.maven.plugins.annotations.LifecyclePhase
 -dontwarn org.apache.maven.plugins.annotations.Mojo
+-dontwarn com.fasterxml.jackson.databind.deser.std.StdDeserializer
+-dontwarn com.fasterxml.jackson.databind.ser.std.StdSerializer
+-dontwarn com.google.errorprone.annotations.FormatMethod
+-dontwarn com.spotify.base.annotations.NotNull
+-dontwarn javax.annotation.Nonnull
+-dontwarn javax.annotation.Nullable

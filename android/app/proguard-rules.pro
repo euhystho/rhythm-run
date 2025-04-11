@@ -1,0 +1,2 @@
+-dontwarn org.apache.maven.plugins.annotations.LifecyclePhase
+-dontwarn org.apache.maven.plugins.annotations.Mojo

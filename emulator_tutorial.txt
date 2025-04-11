@@ -14,3 +14,6 @@ flutter devices //verify the existed emulator
 4.run the emulator:
 flutter build apk //if it is not built
 flutter run //run the emulator
+
+FOR FINAL COMPILE USE THIS COMMAND: 
+    flutter run --dart-define-from-file=api-keys.json 

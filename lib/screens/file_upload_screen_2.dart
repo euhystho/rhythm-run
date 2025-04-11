@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:rhythmrun/utils/theme.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import '../../data/services/localfilepicker.dart';
+import '/data/services/localfilepicker.dart';
 
 class LocalSongsUploadPage extends StatefulWidget {
   const LocalSongsUploadPage({super.key});

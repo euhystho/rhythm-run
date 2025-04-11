@@ -4,8 +4,8 @@ import 'package:permission_handler/permission_handler.dart';
 import 'dart:io';
 import 'package:path/path.dart' as path;
 //3.Task importing local
-Future<List<String>> pickAudioFile() async{
-  final List<String>audioAssetPaths=[];
+Future<Set<String>> pickAudioFile() async{
+  final Set<String>audioAssetPaths={};
   //filter the mp3 file from local file 
   String? initialDirectory;
   if(Platform.isAndroid){

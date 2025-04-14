@@ -6,7 +6,7 @@ class AppleMusicAPI {
   MusicKit musicKit = MusicKit();
   bool authStatus = false;
   bool subStatus = false;
-  String? devToken;
+  String? devToken = String?.fromEnvironment('APPL_MUSIC_DEV_TOKEN');
   String? userToken = '';
   String? countryCode = '';
 
@@ -18,10 +18,8 @@ class AppleMusicAPI {
     // Implement Apple Music API call
   }
 
-  Future<void> addSongToLibrary(self, String song) async {
+  Future<void> addSongToLibrary(String song) async {
     print('Apple Music: Adding song to library: $song');
-    // Implement Apple Music API call
-    await musicKit.setQueue(song.type, item: );
   }
 
   Future<void> addPlaylistToLibrary(List<String> songList) async {

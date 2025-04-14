@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'utils/theme.dart';
 import 'screens/file_upload_screen_2.dart';
+import 'apple_music_test.dart';
+import 'spotify_test.dart';
 
 
 // Welcome Page
@@ -65,6 +67,12 @@ class WelcomePageWidget extends StatelessWidget {
                     onPressed: () {
                       // TODO: Implement Spotify Authentication
                       print('Spotify Authentication');
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => SpotifyTest(),
+                        ),
+                      );
                     },
                     icon: FaIcon(
                       FontAwesomeIcons.spotify,
@@ -85,6 +93,12 @@ class WelcomePageWidget extends StatelessWidget {
                     onPressed: () {
                       // TODO: Implement Apple Music Authentication
                       print('Apple Music Authentication');
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => AppleMusicPage(),
+                        ),
+                      );
                     },
                     icon: Icon(
                       Icons.apple,

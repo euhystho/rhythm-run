@@ -1,9 +1,11 @@
-
+import 'package:flutter/services.dart';
+import 'package:spotify_sdk/spotify_sdk.dart';
 class SpotifyAPI {
-  final String clientID;
-  final String clientSecret;
+  SpotifySdk spotify = SpotifySdk();
+  final String clientID = String.fromEnvironment('SPOT_CLIENT_ID');
+  final String redirectURI = String.fromEnvironment('REDIRECT_URL');
 
-  SpotifyAPI(this.clientID, this.clientSecret);
+  SpotifyAPI();
 
   // Subsystem methods
   Future<void> setMusicQueue(String song, List<String> songList) async {
@@ -28,6 +30,8 @@ class SpotifyAPI {
 
   Future<void> skipSong() async {
     print('Spotify: Skipping song');
+    //TODO: Add more error catching here :)
+    await SpotifySdk.skipNext();
     // Implement Spotify API call
   }
 

@@ -11,8 +11,8 @@ class LocalSongsUploadPage extends StatefulWidget {
 }
 
 class _LocalSongsUploadPageState extends State<LocalSongsUploadPage> {
-  List<String> selectedFiles = [];
-  Set<String> selectedForAnalysis = {};
+  // List<String> selectedFiles = [];
+  Set<String> selectedFiles = {};
 
   bool isLoading = false;
 
@@ -129,7 +129,7 @@ class _LocalSongsUploadPageState extends State<LocalSongsUploadPage> {
                       padding: EdgeInsets.zero,
                       itemCount: selectedFiles.length,
                       itemBuilder: (context, index) {
-                        final filePath = selectedFiles[index];
+                        final filePath = selectedFiles.toList()[index];
                         final fileName = filePath.split('/').last;
                         return ListTile(
                           title: Text(
@@ -142,78 +142,11 @@ class _LocalSongsUploadPageState extends State<LocalSongsUploadPage> {
                               color: RhythmRunTheme.secondaryText,
                             ),
                           ),
-                          leading: Checkbox(
-                            value: selectedForAnalysis.contains(filePath),
-                            onChanged: (bool? value) {
-                              setState(() {
-                                if (value == true) {
-                                  selectedForAnalysis.add(filePath);
-                                } else {
-                                  selectedForAnalysis.remove(filePath);
-                                }
-                              });
-                            },
-                          ),
                           dense: false,
                           contentPadding: const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
                         );
                       },
                     ),
-                    // child: ReorderableListView.builder(
-                    //   padding: EdgeInsets.zero,
-                    //   shrinkWrap: true,
-                    //   itemCount: selectedFiles.length,
-                    //   onReorder: (oldIndex, newIndex) {
-                    //     setState(() {
-                    //       if (oldIndex < newIndex) {
-                    //         newIndex -= 1;
-                    //       }
-                    //       final item = selectedFiles.removeAt(oldIndex);
-                    //       selectedFiles.insert(newIndex, item);
-                    //     });
-                    //   },
-                    //   itemBuilder: (context, index) {
-                    //     final filePath = selectedFiles[index];
-                    //     final fileName = filePath.split('/').last;
-                    //     return Material(
-                    //       key: Key('$index'),
-                    //       color: Colors.transparent,
-                    //       child: ListTile(
-                    //         title: Text(
-                    //           fileName,
-                    //           style: Theme.of(context).textTheme.bodyLarge,
-                    //         ),
-                    //         subtitle: Text(
-                    //           'Pending analysis',
-                    //           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    //             color: RhythmRunTheme.secondaryText,
-                    //           ),
-                    //         ),
-                    //         leading: Checkbox(
-                    //           value: selectedForAnalysis.contains(filePath),
-                    //           onChanged: (bool? value) {
-                    //             setState(() {
-                    //               if (value == true) {
-                    //                 selectedForAnalysis.add(filePath);
-                    //               } else {
-                    //                 selectedForAnalysis.remove(filePath);
-                    //               }
-                    //             });
-                    //           },
-                    //         ),
-                    //         dense: false,
-                    //         contentPadding: const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
-                    //         trailing: ReorderableDragStartListener(
-                    //           index: index,
-                    //           child: Icon(
-                    //             Icons.drag_handle,
-                    //             color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    //           ),
-                    //         ),
-                    //       ),
-                    //     );
-                    //   },
-                    // ),
                   ),
                 ],
               ),
@@ -246,7 +179,7 @@ class _LocalSongsUploadPageState extends State<LocalSongsUploadPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              '${selectedForAnalysis.length} Songs',
+                              'Songs',
                               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                                 fontWeight: FontWeight.w500,
                               ),

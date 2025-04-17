@@ -1,5 +1,5 @@
-import 'package:flutter/services.dart';
 import 'package:spotify_sdk/spotify_sdk.dart';
+
 class SpotifyAPI {
   SpotifySdk spotify = SpotifySdk();
   final String clientID = String.fromEnvironment('SPOT_CLIENT_ID');

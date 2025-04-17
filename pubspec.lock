@@ -376,6 +376,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.7.5"
+  lastfm:
+    dependency: "direct main"
+    description:
+      name: lastfm
+      sha256: "8252b5d8f62625ca465a7f24da3afe851e1cf3d94d75a9ca94f6638e5764dd9f"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.6"
   leak_tracker:
     dependency: "direct main"
     description:
@@ -957,6 +965,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.1.0"
+  xml:
+    dependency: transitive
+    description:
+      name: xml
+      sha256: b015a8ad1c488f66851d762d3090a21c600e479dc75e68328c52774040cf9226
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.5.0"
 sdks:
   dart: ">=3.7.0 <4.0.0"
   flutter: ">=3.27.0"

@@ -8,7 +8,7 @@ class SpotifyAPI {
   SpotifyAPI();
 
   // Subsystem methods
-  Future<void> setMusicQueue(String song, List<String> songList) async {
+  Future<void> setMusicQueue(Song song, List<String> songList) async {
     print('Spotify: Setting music queue for $song, list: $songList');
     // Implement Spotify API call
   }

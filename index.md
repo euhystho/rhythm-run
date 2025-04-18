@@ -51,3 +51,7 @@ Yes, in later versions the app may use GPS or wearable devices to monitor aspect
 **Q**: How will I know when the intensity is going to change?
 
 Not in the initial version, but later versions will include voice or haptic feedback to indicate when the pace or intensity is about to change.
+
+##Acknowledgements:
+Thanks to [GetSongBPM](https://getsongbpm.com) for tempo data!
+Thanks to [LastFM](https://www.last.fm) for suggesting similar songs!

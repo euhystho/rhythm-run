@@ -1,12 +1,21 @@
 import sqlite3
-import cloudscraper, urllib.parse
+import cloudscraper, requests
+import urllib.parse
+from ratelimit import limits, sleep_and_retry, RateLimitException
 from difflib import SequenceMatcher
-import time, sys
+from dotenv import load_dotenv
+import os
 
-# HTML Responses:
+load_dotenv()
+
+API_KEY = os.environ.get('BPM_API_KEY')
+
 OK_STATUS = 200
 TOO_MANY_REQUESTS = 429
 CLOUDFLARE_BLOCK = 403
+
+MINUTE = 60
+HOUR = 3600
 
 class TuneBatError(Exception):
     def __init__(self, message, file=None, title=None, artist=None, score=None):
@@ -19,7 +28,7 @@ class TuneBatError(Exception):
 
 class SongDatabase:
     
-    def __init__(self, db_name="songs.db"):
+    def __init__(self, db_name="analyzed_songs.db"):
         """
         Initialize the database connection and create the table if it doesn't exist.
         """
@@ -34,12 +43,6 @@ class SongDatabase:
             ArtistName: Musical Artist's Name
             TrackName: Song/Track Name
             BPM: Beats Per Minute of the Song
-            EnergyLevel: Explained by Spotify's Audio Feature Documentation:
-                Energy is a measure from 0.0 to 1.0 and represents a perceptual measure
-                of intensity and activity. Typically, energetic tracks feel fast, loud, and noisy.
-                For example, death metal has high energy, while a Bach prelude scores low on the scale.
-                Perceptual features contributing to this attribute include dynamic range,
-                perceived loudness, timbre, onset rate, and general entropy.
         """
         conn = sqlite3.connect(self.db_name)
         cursor = conn.cursor()
@@ -48,28 +51,26 @@ class SongDatabase:
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 ArtistName TEXT,
                 TrackName TEXT UNIQUE,
-                BPM INTEGER,
-                EnergyLevel REAL
+                BPM INTEGER
             )
         """)
         conn.commit()
         conn.close()
 
-    def save_song(self, artistName, trackName, BPM, energy):
+    def save_song(self, artistName, trackName, BPM):
         """
         Save a song's data to the database.
         Parameters:
             artistName (string): Artist's Name
             trackName (string): Track's Name
             BPM (integer): Beats Per Minute
-            energy (float): Defined by Spotify's Audio Features 
         """
         conn = sqlite3.connect(self.db_name)
         cursor = conn.cursor()
         cursor.execute("""
-            INSERT INTO songs (ArtistName, TrackName, BPM, EnergyLevel)
-            VALUES (?, ?, ?, ?)
-        """, (artistName, trackName, BPM, energy))
+            INSERT INTO songs (ArtistName, TrackName, BPM)
+            VALUES (?, ?, ?)
+        """, (artistName, trackName, BPM))
         conn.commit()
         conn.close()
 
@@ -100,15 +101,29 @@ class SongDatabase:
         conn.close()
         return row
 
-class TuneBatBPMAnalysis:
-# These variables are if CloudFlare throttles you :)
-    throttle_active = False
-    throttle_end_time = 0
+class BPMAnalysis:
     
     def __init__(self, database):
         self.database = database
 
-    def search(self, artist_name, track_name):
+    def findExistingSong(self, artist_name, track_name):
+        # Check if the song is in the database:
+        existing_song = self.database.fetch_song(artist_name, track_name)
+        
+        if existing_song:
+            return existing_song[3]
+        return None
+    
+    def getBPM(self, artist_name, track_name):
+        first_run = self.getBPMfromSongBPM(artist_name, track_name)
+        if first_run:
+            return first_run
+        else:
+            return self.getBPMFromTuneBat(artist_name,track_name)
+    
+    @sleep_and_retry
+    @limits(calls=15, period=MINUTE)
+    def searchTuneBat(self, artist_name, track_name):
         """
         Makes a search request to the Tunebat API with rate limiting handling
         
@@ -117,7 +132,7 @@ class TuneBatBPMAnalysis:
             track_name (string): The song's name
             
         Returns:
-            list: The search results or None on error
+            json: a list of searched tracks or raise an error
         """
         
         # Search Term concatenates the artist and track
@@ -129,77 +144,103 @@ class TuneBatBPMAnalysis:
         # Construct the API URL
         url = f"https://api.tunebat.com/api/tracks/search?term={encoded_term}"
         
-        # Wait if we're currently throttled (CHANGE TO SOMETHING TO COMMUNICATE WITH DART)
-        if self.throttle_active:
-            remaining = max(0, self.throttle_end_time - time.time())
-            if remaining > 0:
-                # Create visual countdown like in the JS version
-                for i in range(int(remaining), 0, -1):
-                    sys.stdout.write(f"\rThrottled. Waiting {i} seconds...  ")
-                    sys.stdout.flush()
-                    time.sleep(1)
-                sys.stdout.write("\r" + " " * 40 + "\r")  # Clear the line
-            self.throttle_active = False
-        
         # Create a Cloudscraper instance
         scraper = cloudscraper.create_scraper()
-        
-        try:
-            response = scraper.get(url)
-            
-            # Check for rate limiting (429)
-            if response.status_code == TOO_MANY_REQUESTS:
-                # Get retry-after header, or default to 60 seconds
-                retry_after = int(response.headers.get('retry-after', 60)) + 5
-                self.throttle_active = True
-                self.throttle_end_time = time.time() + retry_after
-                print(f"Rate limited. Will retry in {retry_after} seconds.")
-                # Recursive call after waiting
-                return self.search(artist_name, track_name)
-                
-            # Check for Cloudflare blocking (403)
-            if response.status_code == CLOUDFLARE_BLOCK:
-                print("Cloudflare has blocked API requests for now, need to wait a while...")
-                return None
-                
-            # Check if the request succeeded
-            if response.status_code != OK_STATUS:
-                print(f"Error: API returned status code {response.status_code}")
-                return None
-                
-            # Parse the JSON response
-            data = response.json()
-            
-            return data['data']['items']
-            
-        except Exception as e:
-            print(f"Error during search: {e}")
-            return None
 
-    def getBPM(self, artist_name, track_name, song_uri, is_spotify):
+        # Make a GET Request
+        response = scraper.get(url)
+        
+        # Check if the response code is OK!
+        if response.status_code != OK_STATUS:
+            if response.status_code == CLOUDFLARE_BLOCK:
+                raise Exception('Cloudflare is blocking you from making more requests!')
+            raise Exception('API Response {}'.format(response.status_code))
+
+        return response.json()
+
+    @limits(calls=3000, period=HOUR)
+    def searchGetSongBPM(self, artist_name, track_name):
         """
-        Gets the BPM given an artist name and a song name, then
-        returns the BPM and energy level from the TuneBat API with enhanced error handling
+        Makes a search request to the GetSongBPM.com API with rate limiting handling
         
         Args:
             artist_name (string): The artist's name
             track_name (string): The song's name
-            song_uri (string): Spotify's proprietary song URI
-            is_spotify (bool): True if Spotify URI is used, False otherwise
             
         Returns:
-            tuple: (BPM, energy level), success flag
+            json: a list of searched tracks or raise an error
+        """
+        lookup = f"song:{track_name} artist:{artist_name}"
+        
+        url = "https://api.getsong.co/search/"
+        
+        params = {
+            "api_key": API_KEY,
+            "type": "both",
+            "lookup": lookup
+        }
+        
+        response = requests.get(url, params=params)
+        
+        if response.status_code != OK_STATUS:
+            raise Exception('API Response {}'.format(response.status_code))
+        return response.json()
+        
+    def getBPMfromSongBPM(self, artist_name, track_name):
+        """
+        Gets the BPM given an artist name and a song name, then
+        returns the BPM from the GetSongBPM API with error handling
+        
+        Args:
+            artist_name (string): The artist's name
+            track_name (string): The song's name
+        Returns:
+            int: BPM
         """
         # Check if the song is in the database:
-        existing_song = self.database.fetch_song(artist_name, track_name)
+        existing_bpm = self.findExistingSong(artist_name, track_name)
         
-        if existing_song:
-            return (existing_song[3],existing_song[4]), True
+        if existing_bpm:
+            return existing_bpm
+        try:
+            data = self.searchGetSongBPM(artist_name, track_name)
+            search_results = data.get("search")
+            # Check if the results are in a list format
+            if isinstance(search_results, list) and search_results: 
+                song = search_results[0]
+                bpm = song.get("tempo", "Unknown")
+                return bpm
+            # Else, no results were found inside the results
+            elif search_results:  
+                return None
+            else:
+                raise KeyError("Unexpected response format or error in search response.")
+        except requests.exceptions.RequestException as e:
+            print(f"Error: {e}")
+        except (ValueError, KeyError) as ve:
+            print(f"Error: {ve}")
+        
+    def getBPMFromTuneBat(self, artist_name, track_name):
+        """
+        Gets the BPM given an artist name and a song name, then
+        returns the BPM from the TuneBat API with error handling
+        
+        Args:
+            artist_name (string): The artist's name
+            track_name (string): The song's name
+        Returns:
+            int: BPM
+        """
+        # Check if the song is in the database:
+        existing_bpm = self.findExistingSong(artist_name, track_name)
+        
+        if existing_bpm:
+            return existing_bpm
         
         try:
             # Get tracks using our enhanced search function
-            tracks = self.search(artist_name, track_name)
-            
+            data = self.searchTuneBat(artist_name, track_name)
+            tracks = data['data']['items']
         # The tracks data should look something like this:
             # {
                 # id: "Spotify ID" (URI)
@@ -233,7 +274,7 @@ class TuneBatBPMAnalysis:
         
             
             if not tracks:
-                return None, False
+                return None
                 
             # Track similarity scoring 
             best_match = {"track": None, "score": 0}
@@ -241,21 +282,19 @@ class TuneBatBPMAnalysis:
             for track in tracks:
                 track_uri = track.get('id')
                 bpm = round(track.get('b', 0))
-                nrg = track.get('e', 0)
                 
                 # Track Name and Artist Name(s) from Tunebat API
                 track_name_tb = track.get('n', '').lower()
                 artist_names_tb = [artist.lower() for artist in track.get('as', [])]
                 
                 # Check for direct match
-                is_uri_match = (track_uri == song_uri and is_spotify)
                 is_same_song = (track_name_tb == track_name.lower() and artist_name.lower() in artist_names_tb)
                 
-                if is_uri_match or is_same_song:
+                if is_same_song:
                     # Save direct match
                     if bpm is not None:
-                        self.database.save_song(artist_name, track_name, bpm, nrg)
-                        return (bpm, nrg), True
+                        self.database.save_song(artist_name, track_name, bpm)
+                        return bpm
                 
                 # Calculate similarity score for fuzzy matching
                 if artist_name.lower() in artist_names_tb or not artist_name:
@@ -268,35 +307,31 @@ class TuneBatBPMAnalysis:
             if best_match["score"] >= threshold and best_match["track"]:
                 track = best_match["track"]
                 bpm = round(track.get('b', 0))
-                nrg = track.get('e', 0)
                 
                 if bpm is not None:
-                    self.database.save_song(artist_name, track_name, bpm, nrg)
-                    return (bpm, nrg), True
+                    self.database.save_song(artist_name, track_name, bpm)
+                    return bpm
             
             # No good match found
-            return None, False
+            return 1
             
-        except Exception as e:
-            print(f"Error in getBPM: {e}")
-            return None, False
+        except RateLimitException as e:
+            raise TuneBatError(e)
 
 if __name__ == "__main__":
     songs = SongDatabase()
-    tunebat = TuneBatBPMAnalysis(songs)
-    artist_list = ["Lady Gaga"] * 14
-    mayhem_list = ["Disease", "Abracadabra", "Garden of Eden", "Perfect Celebrity", "Vanish Into You",
+    analysis = BPMAnalysis(songs)
+    artist_list = ["Lady Gaga"] * 16
+    track_list = ["Disease", "Abracadabra", "Garden of Eden", "Perfect Celebrity", "Vanish Into You",
                    "Killah (feat. Gesaffelstein)", "Zombieboy", "LoveDrug", "How Bad Do U Want Me", "Don't Call Tonight", 
-                   "Shadow of a Man", "The Beast", "Blade of Grass", "Die With A Smile"]
+                   "Shadow of a Man", "The Beast", "Blade of Grass", "Die With A Smile", "LoveGame", "Applause"]
     song_URI = "7DX4dnqhCQpykHwzLrmA6O"
     is_spotify = False
     
     
-    for artist, track in zip(artist_list, mayhem_list):
-        bpm_nrg_tuple = tunebat.getBPM(artist, track, song_URI, is_spotify)
-        print(f"{track} by {artist} has a (BPM, Energy Level) of {bpm_nrg_tuple[0]}")
+    for artist, track in zip(artist_list, track_list):
+        bpm = analysis.getBPM(artist, track)
+        print(f"{track} by {artist} has a BPM of {bpm}")
 
     for row in songs.fetch_all_songs():
         print(row)
-
-# Flask API, mongoDB?

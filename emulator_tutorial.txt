@@ -17,3 +17,8 @@ flutter run //run the emulator
 
 FOR FINAL COMPILE USE THIS COMMAND: 
     flutter run --dart-define-from-file=api-keys.json 
+
+FOR INSTALLING AND RUNNING PYTHON ENVIRONMENT (RATHER USE UV INSTEAD OF PIP)
+1. install uv file by using terminal: pip install uv
+2. type: uv sync    # To match the dependencies
+3. add the pacakge: uv add <name_of_the_package>

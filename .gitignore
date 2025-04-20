@@ -47,9 +47,11 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 ios/Podfile.lock
-<<<<<<< Updated upstream
 api-keys.json
-=======
 
+# python environment
+.venv
 
->>>>>>> Stashed changes
+#ignore UV-specific locfiles and cache directories
+uv.lock
+uv-cache/

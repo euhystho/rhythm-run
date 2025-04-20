@@ -1,0 +1,14 @@
+[project]
+name = "rhythm-run"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "cloudscraper>=1.2.71",
+    "dotenv>=0.9.9",
+    "matplotlib>=3.10.1",
+    "numpy>=2.2.5",
+    "ratelimit>=2.2.1",
+    "scipy>=1.15.2",
+]

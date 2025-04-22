@@ -2,17 +2,17 @@ import 'package:lastfm/lastfm.dart';
 import '../types/song.dart';
 import 'package:xml/xml.dart' as xml;
 
-Future<Playlist> getSimilarSongs(Song song) async {
-  String API_KEY = String.fromEnvironment('LASTFM_API_KEY');
-  String SHARED_SECRET = String.fromEnvironment('LASTFM_SHARED_SECRET');
-  LastFM lastfm = LastFMUnauthorized(API_KEY, SHARED_SECRET);
+Future<Playlist> getSimilarSongs(Song song, double lowerThreshold, int limit) async {
+  String apiKey = String.fromEnvironment('LASTFM_API_KEY');
+  String sharedSecret = String.fromEnvironment('LASTFM_SHARED_SECRET');
+  LastFM lastfm = LastFMUnauthorized(apiKey, sharedSecret);
 
   try {
     // Make the API call
     var similarSongs = await lastfm.read('track.getSimilar', {
       "artist": song.artist,
       "track": song.name,
-      "limit": "10",
+      "limit": limit.toString(),
     });
 
     // Get all track elements directly from the LastFM response
@@ -40,15 +40,16 @@ Future<Playlist> getSimilarSongs(Song song) async {
                   element.findElements('match').first.innerText,
                 ) ??
                 0.0;
-
-            // Create and return a Song object
-            return SimilarSong(song, name, artistName, match);
+            if (match >= lowerThreshold) {
+              // Create and return a SimilarSong object
+              return SimilarSong(song, name, artistName, match);
+            }
           } catch (e) {
             print("Error parsing track: $e");
-            // Return a placeholder song if parsing fails for this track
-            return Song("Unknown", "Unknown");
           }
-        }).toList();
+          // Return null if parsing fails or match is below threshold
+          return null;
+        }).whereType<Song>().toList();
 
     return Playlist(tracks); // Return the playlist
   } catch (e) {
@@ -63,7 +64,7 @@ void main() async {
   Song follow = Song("The Prince", "Madeon");
 
   // Fetch the playlist
-  Playlist playlist = await getSimilarSongs(follow);
+  Playlist playlist = await getSimilarSongs(follow, 0.2, 10);
 
   // Print all songs in the playlist
   for (var song in playlist.tracks) {

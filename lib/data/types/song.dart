@@ -32,4 +32,5 @@ class AnalyzedSong extends Song {
   int tempo;
 
   AnalyzedSong(super.name,super.artist, this.duration, this.tempo);
+
 }

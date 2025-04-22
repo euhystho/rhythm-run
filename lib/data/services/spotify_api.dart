@@ -1,4 +1,5 @@
 import 'package:spotify_sdk/spotify_sdk.dart';
+import '../types/song.dart';
 
 class SpotifyAPI {
   SpotifySdk spotify = SpotifySdk();
@@ -8,17 +9,17 @@ class SpotifyAPI {
   SpotifyAPI();
 
   // Subsystem methods
-  Future<void> setMusicQueue(Song song, List<String> songList) async {
+  Future<void> setMusicQueue(Song song, Playlist songList) async {
     print('Spotify: Setting music queue for $song, list: $songList');
     // Implement Spotify API call
   }
 
-  Future<void> addSongToLibrary(String song) async {
+  Future<void> addSongToLibrary(Song song) async {
     print('Spotify: Adding song to library: $song');
     // Implement Spotify API call
   }
 
-  Future<void> addPlaylistToLibrary(List<String> songList) async {
+  Future<void> addPlaylistToLibrary(Playlist songList) async {
     print('Spotify: Adding playlist to library: $songList');
     // Implement Spotify API call
   }

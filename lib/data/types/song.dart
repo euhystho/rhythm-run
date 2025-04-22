@@ -1,6 +1,18 @@
 class Playlist {
   List<Song> tracks;
   Playlist(this.tracks);
+
+  @override
+  String toString() {
+    String res = '';
+    for (int i = 0; i < tracks.length; i++) {
+      res += '${tracks[i]}';
+      if (i != (tracks.length - 1)) {
+        res += ', ';
+      }
+    }
+    return res;
+  }
 }
 
 
@@ -9,6 +21,11 @@ class Song {
   String artist;
 
   Song(this.name, this.artist);
+
+  @override
+  String toString() {
+    return '$name by $artist';
+  }
 }
 
 class StreamableSong extends Song {

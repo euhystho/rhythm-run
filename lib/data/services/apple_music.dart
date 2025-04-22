@@ -1,5 +1,6 @@
 import 'package:music_kit/music_kit.dart';
 import 'dart:async';
+import '../types/song.dart';
 
 
 class AppleMusicAPI {
@@ -13,16 +14,16 @@ class AppleMusicAPI {
   AppleMusicAPI(this.musicKit);
 
   // Subsystem methods
-  Future<void> setMusicQueue(String song, List<String> songList) async {
+  Future<void> setMusicQueue(Song song, Playlist songList) async {
     print('Apple Music: Setting music queue for $song, list: $songList');
     // Implement Apple Music API call
   }
 
-  Future<void> addSongToLibrary(String song) async {
+  Future<void> addSongToLibrary(Song song) async {
     print('Apple Music: Adding song to library: $song');
   }
 
-  Future<void> addPlaylistToLibrary(List<String> songList) async {
+  Future<void> addPlaylistToLibrary(Playlist songList) async {
     print('Apple Music: Adding playlist to library: $songList');
     // Implement Apple Music API call
   }

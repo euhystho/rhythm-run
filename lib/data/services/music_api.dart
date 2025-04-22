@@ -1,6 +1,7 @@
 import 'music_auth.dart';
 import 'spotify_api.dart';
 import 'apple_music.dart';
+import '../types/song.dart';
 
 class MusicAPI {
   final MusicAuth _auth;
@@ -10,7 +11,7 @@ class MusicAPI {
   MusicAPI(this._auth, this._spotifyAPI, this._appleMusicAPI);
 
   // Facade methods to simplify music operations
-  Future<void> setMusicQueue(String song, List<String> songList) async {
+  Future<void> setMusicQueue(Song song, Playlist songList) async {
     // Delegate to appropriate API based on auth status
     final authStatus = await _auth.getAuthStatus();
     if (authStatus == 'spotify') {
@@ -20,7 +21,7 @@ class MusicAPI {
     }
   }
 
-  Future<void> addSongToLibrary(String song) async {
+  Future<void> addSongToLibrary(Song song) async {
     final authStatus = await _auth.getAuthStatus();
     if (authStatus == 'spotify') {
       await _spotifyAPI.addSongToLibrary(song);
@@ -29,7 +30,7 @@ class MusicAPI {
     }
   }
 
-  Future<void> addPlaylistToLibrary(List<String> songList) async {
+  Future<void> addPlaylistToLibrary(Playlist songList) async {
     final authStatus = await _auth.getAuthStatus();
     if (authStatus == 'spotify') {
       await _spotifyAPI.addPlaylistToLibrary(songList);

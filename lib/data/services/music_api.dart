@@ -1,3 +1,5 @@
+import 'package:spotify_sdk/enums/repeat_mode_enum.dart';
+
 import 'music_auth.dart';
 import 'spotify_api.dart';
 import 'apple_music.dart';
@@ -11,31 +13,22 @@ class MusicAPI {
   MusicAPI(this._auth, this._spotifyAPI, this._appleMusicAPI);
 
   // Facade methods to simplify music operations
-  Future<void> setMusicQueue(Song song, Playlist songList) async {
+  Future<void> setMusicQueue(StreamableSong song) async {
     // Delegate to appropriate API based on auth status
     final authStatus = await _auth.getAuthStatus();
     if (authStatus == 'spotify') {
-      await _spotifyAPI.setMusicQueue(song, songList);
+      await _spotifyAPI.setMusicQueue(song);
     } else if (authStatus == 'apple') {
-      await _appleMusicAPI.setMusicQueue(song, songList);
+      await _appleMusicAPI.setMusicQueue(song);
     }
   }
 
-  Future<void> addSongToLibrary(Song song) async {
+  Future<void> addSongToLibrary(StreamableSong song) async {
     final authStatus = await _auth.getAuthStatus();
     if (authStatus == 'spotify') {
       await _spotifyAPI.addSongToLibrary(song);
     } else if (authStatus == 'apple') {
       await _appleMusicAPI.addSongToLibrary(song);
-    }
-  }
-
-  Future<void> addPlaylistToLibrary(Playlist songList) async {
-    final authStatus = await _auth.getAuthStatus();
-    if (authStatus == 'spotify') {
-      await _spotifyAPI.addPlaylistToLibrary(songList);
-    } else if (authStatus == 'apple') {
-      await _appleMusicAPI.addPlaylistToLibrary(songList);
     }
   }
 
@@ -66,12 +59,12 @@ class MusicAPI {
     }
   }
 
-  Future<void> repeatSongs({bool repeatCurrent = false}) async {
+  Future<void> repeatSongs(bool repeat) async {
     final authStatus = await _auth.getAuthStatus();
     if (authStatus == 'spotify') {
-      await _spotifyAPI.repeatSongs(repeatCurrent: repeatCurrent);
+      await _spotifyAPI.repeatSongs(repeat as RepeatMode);
     } else if (authStatus == 'apple') {
-      await _appleMusicAPI.repeatSongs(repeatCurrent: repeatCurrent);
+      await _appleMusicAPI.repeatSongs(repeat);
     }
   }
 }

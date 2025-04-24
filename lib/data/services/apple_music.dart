@@ -14,8 +14,8 @@ class AppleMusicAPI {
   AppleMusicAPI(this.musicKit);
 
   // Subsystem methods
-  Future<void> setMusicQueue(Song song, Playlist songList) async {
-    print('Apple Music: Setting music queue for $song, list: $songList');
+  Future<void> setMusicQueue(Song song) async {
+    print('Apple Music: Setting music queue for $song');
     // Implement Apple Music API call
   }
 
@@ -23,10 +23,6 @@ class AppleMusicAPI {
     print('Apple Music: Adding song to library: $song');
   }
 
-  Future<void> addPlaylistToLibrary(Playlist songList) async {
-    print('Apple Music: Adding playlist to library: $songList');
-    // Implement Apple Music API call
-  }
   Future<void> play() async {
     await musicKit.play();
   }
@@ -46,13 +42,13 @@ class AppleMusicAPI {
     // Implement Apple Music API call
   }
 
-  Future<void> repeatSongs({bool repeatCurrent = false}) async {
-    print('Apple Music: Repeating songs, repeatCurrent: $repeatCurrent');
+  Future<void> repeatSongs(bool repeat) async {
+    print('Apple Music: Repeating songs, repeatCurrent: $repeat');
     // Implement Apple Music API call
   }
 
-  Future<bool> checkSubscription() async {
+  Future<String> checkSubscription() async {
     // Placeholder for subscription check
-    return true; // Implement actual logic
+    return "true"; // Implement actual logic
   }
 }

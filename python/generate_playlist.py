@@ -83,21 +83,36 @@ def generate_playlist(xp_lvl, intensity, duration):
         'long': (20, 25)
     }
 
-    bpm_range = ranges[xp_lvl][intensity]
+    # validate inputs
+    if xp_lvl not in ranges or intensity not in ranges[xp_lvl] or duration not in duration_ranges:
+        return None
+
+    seen_ids = set()
+    step = 2
+    total_time = 0.0
+    playlist = []
+
+    min_bpm, max_bpm = ranges[xp_lvl][intensity]
     min_dur, max_dur = duration_ranges[duration]
 
-    c.execute("SELECT id, name, bpm, length FROM songs WHERE bpm BETWEEN ? AND ?", bpm_range)
-    all_matches = c.fetchall()
-    random.shuffle(all_matches) # just so it's not in the order the user uploads in
+    while total_time < min_dur:
+        c.execute("SELECT id, name, bpm, length FROM songs WHERE bpm BETWEEN ? AND ?", (min_bpm, max_bpm))
+        matches = [song for song in c.fetchall() if song[0] not in seen_ids]
+        random.shuffle(matches) # just so it's not in the order the user uploads in
 
-    playlist = []
-    total_time = 0.0
+        for song in matches:
+            if total_time + song[3] <= max_dur:
+                playlist.append(song)
+                total_time += song[3]
+                seen_ids.add(song[0])
+            if total_time >= min_dur:
+                break
 
-    for song in all_matches:
-        if total_time + song[3] <= max_dur:
-            playlist.append(song)
-            total_time += song[3]
-        if total_time >= min_dur:
+        min_bpm -= step
+        max_bpm += step
+
+        # stop expanding bpm range if outside of reasonable bpms
+        if min_bpm < 60 and max_bpm > 220:
             break
 
     conn.close()
@@ -106,6 +121,8 @@ def generate_playlist(xp_lvl, intensity, duration):
 if __name__ == "__main__":
     create_sample_db()
     playlist = generate_playlist("intermediate", "low", "medium") # exp, intensity, duration
+    # playlist = generate_playlist("b", "b", "b")
 
-    for song in playlist:
-        print(f"{song[1]} ({song[2]} BPM, {song[3]} min)")
+    if playlist:
+        for song in playlist:
+            print(f"{song[1]} ({song[2]} BPM, {song[3]} min)")

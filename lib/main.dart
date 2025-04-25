@@ -79,7 +79,7 @@ class WelcomePageWidget extends StatelessWidget {
                       color: Theme.of(context).colorScheme.onSurface,
                       size: 24,
                     ),
-                    label: const Text('Continue with Spotify'),
+                    label: const Text('Import with Spotify'),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: RhythmRunTheme.spotifyGreen,
                     ),
@@ -105,7 +105,7 @@ class WelcomePageWidget extends StatelessWidget {
                       color: Theme.of(context).colorScheme.onSurface,
                       size: 24,
                     ),
-                    label: const Text('Continue with Apple Music'),
+                    label: const Text('Import with Apple Music'),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: RhythmRunTheme.appleMusicRed,
                     ),
@@ -127,7 +127,7 @@ class WelcomePageWidget extends StatelessWidget {
                       Icons.person_add,
                       color: Theme.of(context).colorScheme.onSurface,
                     ),
-                    label: const Text('Continue with Local Music'),
+                    label: const Text('Import with Local Music'),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Theme.of(context).colorScheme.secondary,
                     ),

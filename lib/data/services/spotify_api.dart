@@ -2,23 +2,32 @@ import 'package:flutter/services.dart';
 import 'package:spotify_sdk/spotify_sdk.dart';
 import '../types/song.dart';
 
-
 class SpotifyAPI {
   SpotifySdk spotify = SpotifySdk();
   final String clientID = String.fromEnvironment('SPOT_CLIENT_ID');
   final String redirectURI = String.fromEnvironment('REDIRECT_URL');
-  final List<String> _playerQueue = [];
+  final List<String> _songQueue = [];
+  bool loading = false;
 
-  SpotifyAPI();
+  Future<void> initSpotify() async {
+    /// Initializes the Spotify API by connecting the Spotify,
+    /// then getting the Authentication Token and throws an error if initializing fails
+    try {
+      await connectToSpotify();
+      await getAuth();
+    } catch (e) {
+      print('Failed to initialize Spotify');
+    }
+  }
 
   // Subsystem methods
   Future<void> setMusicQueue(StreamableSong song) async {
+    /// Adds a song to the queue on Spotify based on the Spotify URI
     print('Spotify: Setting music queue for $song');
-    // Implement Spotify API call
-    _playerQueue.add(song.streamID);
+    _songQueue.add(song.streamID);
     try {
-      if (_playerQueue.isNotEmpty) {
-        await SpotifySdk.queue(spotifyUri: _playerQueue.last);
+      if (_songQueue.isNotEmpty) {
+        await SpotifySdk.queue(spotifyUri: _songQueue.last);
       }
     } on PlatformException catch (e) {
       print(e.code);
@@ -29,10 +38,8 @@ class SpotifyAPI {
 
   Future<void> addSongToLibrary(StreamableSong song) async {
     print('Spotify: Adding song to library: $song');
-    // Implement Spotify API call
     try {
-      await SpotifySdk.addToLibrary(
-          spotifyUri: song.streamID);
+      await SpotifySdk.addToLibrary(spotifyUri: song.streamID);
     } on PlatformException catch (e) {
       print(e.code);
     } on MissingPluginException {
@@ -42,7 +49,6 @@ class SpotifyAPI {
 
   Future<void> togglePlayback() async {
     print('Spotify: Toggling playback');
-    // Implement Spotify API call
     try {
       await SpotifySdk.pause();
     } on PlatformException catch (e) {
@@ -54,7 +60,6 @@ class SpotifyAPI {
 
   Future<void> skipSong() async {
     print('Spotify: Skipping song');
-    // Implement Spotify API call
     try {
       await SpotifySdk.skipNext();
     } on PlatformException catch (e) {
@@ -66,7 +71,6 @@ class SpotifyAPI {
 
   Future<void> shuffleSongs() async {
     print('Spotify: Shuffling songs');
-    // Implement Spotify API call
     try {
       await SpotifySdk.toggleShuffle();
     } on PlatformException catch (e) {
@@ -78,11 +82,8 @@ class SpotifyAPI {
 
   Future<void> repeatSongs(RepeatMode repeat) async {
     print('Spotify: Repeating songs, repeatCurrent: $repeat');
-    // Implement Spotify API call
     try {
-      await SpotifySdk.setRepeatMode(
-        repeatMode: repeat,
-      );
+      await SpotifySdk.setRepeatMode(repeatMode: repeat);
     } on PlatformException catch (e) {
       print(e.code);
     } on MissingPluginException {
@@ -90,16 +91,41 @@ class SpotifyAPI {
     }
   }
 
-  Future<String> checkSubscription() async {
-    // Placeholder for subscription check
+  /// Authentication Methods:
+
+  Future<void> connectToSpotify() async {
+    try {
+      loading = true;
+
+      var result = await SpotifySdk.connectToSpotifyRemote(
+        clientId: const String.fromEnvironment('SPOT_CLIENT_ID'),
+        redirectUrl: const String.fromEnvironment('REDIRECT_URL'),
+      );
+      // TODO: Put this in a Popup Message :)
+      print(
+        result ? 'connect to spotify successful' : 'connect to spotify failed',
+      );
+      loading = false;
+    } on PlatformException catch (e) {
+      loading = false;
+      print(e.code);
+    } on MissingPluginException {
+      loading = false;
+      print('not implemented');
+    }
+  }
+
+  Future<String> getAuth() async {
     try {
       var authenticationToken = await SpotifySdk.getAccessToken(
-          clientId: const String.fromEnvironment('SPOT_CLIENT_ID'),
-          redirectUrl: const String.fromEnvironment('REDIRECT_URL'),
-          scope: 'app-remote-control, '
-              'user-modify-playback-state, '
-              'playlist-read-private, '
-              'playlist-modify-public,user-read-currently-playing');
+        clientId: const String.fromEnvironment('SPOT_CLIENT_ID'),
+        redirectUrl: const String.fromEnvironment('REDIRECT_URL'),
+        scope:
+            'app-remote-control, '
+            'user-modify-playback-state, '
+            'playlist-read-private, '
+            'playlist-modify-public,user-read-currently-playing',
+      );
       print('Got a token: $authenticationToken');
       return authenticationToken;
     } on PlatformException catch (e) {

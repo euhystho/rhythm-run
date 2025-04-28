@@ -3,7 +3,7 @@
 <plist version="1.0">
 	<dict>
 		<key>CADisableMinimumFrameDurationOnPhone</key>
-	<true/>
+		<true />
 		<key>CFBundleDevelopmentRegion</key>
 		<string>$(DEVELOPMENT_LANGUAGE)</string>
 		<key>CFBundleDisplayName</key>
@@ -36,7 +36,7 @@
 			</dict>
 		</array>
 		<key>LSRequiresIPhoneOS</key>
-	<true/>
+		<true />
 		<key>LSApplicationQueriesSchemes</key>
 		<array>
 			<string>spotify</string>
@@ -45,7 +45,7 @@
 		<key>NSAppleMusicUsageDescription</key>
 		<string>This app requires access to Apple Music to play songs during workouts.</string>
 		<key>UIApplicationSupportsIndirectInputEvents</key>
-	<true/>
+		<true />
 		<key>UILaunchStoryboardName</key>
 		<string>LaunchScreen</string>
 		<key>UIMainStoryboardFile</key>
@@ -66,27 +66,7 @@
 		<key>NSAppTransportSecurity</key>
 		<dict>
 			<key>NSAllowsArbitraryLoads</key>
-		<true/>
+			<true />
 		</dict>
-		<!-- Google Sign-in Section -->
-		<key>GIDClientID</key>
-		<string>1066195414414-khcfguacook3mha8gkfs85ucfg6djbsr.apps.googleusercontent.com</string>
-		<!-- Authenticate with Backend Server? -->
-		<!-- <key>GIDServerClientID</key>
-	<string>com.googleusercontent.apps.1066195414414-khcfguacook3mha8gkfs85ucfg6djbsr</string> -->
-
-		<key>CFBundleURLTypes</key>
-		<array>
-			<dict>
-				<key>CFBundleTypeRole</key>
-				<string>Editor</string>
-				<key>CFBundleURLSchemes</key>
-				<array>
-					<string>
-						com.googleusercontent.apps.1066195414414-khcfguacook3mha8gkfs85ucfg6djbsr</string>
-				</array>
-			</dict>
-		</array>
-		<!-- End of the Google Sign-in Section -->
 	</dict>
 </plist>

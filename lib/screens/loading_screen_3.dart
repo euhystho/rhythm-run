@@ -16,21 +16,21 @@ class _LoadingPageState extends State<LoadingPage> {
     
     // TODO: implement BPM analysis here
     // TODO: navigate to the user selection screen after processing... TEMPORARY BUTTON BELOW
-    ElevatedButton(
-      onPressed: () {
-        Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => ExperienceLevelPage()),
-          );
-      },
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Theme.of(context).colorScheme.tertiary,
-      ),
-      child: Text("Experience (temp button)",
-          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                color: Theme.of(context).colorScheme.onTertiary,
-              )),
-    );
+    // ElevatedButton(
+    //   onPressed: () {
+    //     Navigator.push(
+    //         context,
+    //         MaterialPageRoute(builder: (context) => ExperienceLevelPage()),
+    //       );
+    //   },
+    //   style: ElevatedButton.styleFrom(
+    //     backgroundColor: Theme.of(context).colorScheme.tertiary,
+    //   ),
+    //   child: Text("Experience (temp button)",
+    //       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+    //             color: Theme.of(context).colorScheme.onTertiary,
+    //           )),
+    // );
   }
 
   @override
@@ -63,17 +63,17 @@ class _LoadingPageState extends State<LoadingPage> {
               ),
             ),
 
-            Container(
-              width: 200,
-              height: 200,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Image.asset(
-                'running.gif', // TODO: replace with actual path, most likely from an assets folder
-                fit: BoxFit.cover,
-              ),
-            ),
+            // Container(
+            //   width: 200,
+            //   height: 200,
+            //   decoration: BoxDecoration(
+            //     borderRadius: BorderRadius.circular(20),
+            //   ),
+            //   child: Image.asset(
+            //     'running.gif', // TODO: replace with actual path, most likely from an assets folder
+            //     fit: BoxFit.cover,
+            //   ),
+            // ),
 
             const SizedBox(height: 30),
 

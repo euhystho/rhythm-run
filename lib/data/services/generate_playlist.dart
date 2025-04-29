@@ -1,10 +1,17 @@
+import 'package:dotenv/dotenv.dart' as dotenv;
 import 'package:lastfm/lastfm.dart';
 import '../types/song.dart';
 import 'package:xml/xml.dart' as xml;
 
+final env = dotenv.DotEnv()..load(['.env']);
+
 Future<Playlist> getSimilarSongs(Song song, double lowerThreshold, int limit) async {
-  String apiKey = String.fromEnvironment('LASTFM_API_KEY');
-  String sharedSecret = String.fromEnvironment('LASTFM_SHARED_SECRET');
+  final tempApiKey = const String.fromEnvironment('LASTFM_API_KEY', defaultValue: '');
+  final tempSharedSecret = const String.fromEnvironment('LASTFM_SHARED_SECRET', defaultValue: '');
+
+  final apiKey = (tempApiKey.isNotEmpty ? tempApiKey : (env['LASTFM_API_KEY'] ?? ''));
+  final sharedSecret = (tempSharedSecret.isNotEmpty) ? tempSharedSecret : env['LASTFM_SHARED_SECRET'];
+
   LastFM lastfm = LastFMUnauthorized(apiKey, sharedSecret);
 
   try {
@@ -13,8 +20,9 @@ Future<Playlist> getSimilarSongs(Song song, double lowerThreshold, int limit) as
       "artist": song.artist,
       "track": song.name,
       "limit": limit.toString(),
-    });
-
+      "api_key": apiKey
+    }).timeout(const Duration(seconds: 5));
+    
     // Get all track elements directly from the LastFM response
     final trackElements = similarSongs.findAllElements('track');
 

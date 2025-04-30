@@ -66,7 +66,26 @@ Future<Playlist> getSimilarSongs(Song song, double lowerThreshold, int limit) as
     return Playlist([Song("Nothing", "Is Here")]);
   }
 }
-
+Future<>implementPace(String xpLvl) async{
+  final range={
+    "beginer":{
+      'low': (120, 130),
+      'medium': (150, 157),
+      'high': (170, 177)
+    },
+    'intermediate': {
+      'low': (130, 140),
+      'medium': (157, 163),
+      'high': (177, 183)
+    },
+    'advanced': {
+      'low': (140, 150),
+      'medium': (163, 170),
+      'high': (183, 190)
+    }
+  };
+  
+}
 // Example usage
 void main() async {
   Song follow = Song("The Prince", "Madeon");

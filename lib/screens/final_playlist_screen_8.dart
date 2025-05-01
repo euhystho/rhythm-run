@@ -1,3 +1,4 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import '../utils/theme.dart';
 import '../data/types/song.dart';
@@ -20,6 +21,77 @@ class FinalPlaylistPageState extends State<FinalPlaylistPage> {
     Song('Value', 'Ado'),
     Song('Souvenir ', 'BUMP OF CHICKEN'),
   ]);
+
+  AudioPlayer? player;
+  bool isPlaying = false;
+  bool isShuffling = false;
+  bool isLooping = false;
+  int currentSongIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    player = AudioPlayer();
+
+    player!.onPlayerComplete.listen((event) {
+      if (isLooping) {
+        playCurrentSong();
+      } else {
+        skipNext();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    player?.dispose();
+    super.dispose();
+  }
+
+  Future<void> playCurrentSong() async {
+    // laterr
+    // final song = songList.tracks[currentSongIndex];
+
+    try {
+      await player!.stop();
+      await player!.setSource(AssetSource('audio/daft.wav')); // replace with actual source
+      await player!.play(AssetSource('audio/daft.wav'));
+      setState(() => isPlaying = true);
+    } catch (e) {
+      print('Playback error: $e');
+    }
+  }
+
+  void togglePlayPause() {
+    if (isPlaying) {
+      player!.pause();
+    } else {
+      playCurrentSong();
+    }
+    setState(() => isPlaying = !isPlaying);
+  }
+
+  Future<void> skipNext() async {
+    if (songList.tracks.isEmpty) return;
+
+    setState(() {
+      if (isShuffling) {
+        currentSongIndex = (currentSongIndex + 1 + DateTime.now().millisecond) % songList.tracks.length;
+      } else {
+        currentSongIndex = (currentSongIndex + 1) % songList.tracks.length;
+      }
+    });
+
+    await playCurrentSong();
+  }
+
+  void toggleShuffle() {
+    setState(() => isShuffling = !isShuffling);
+  }
+
+  void toggleLoop() {
+    setState(() => isLooping = !isLooping);
+  }
 
 
   @override
@@ -58,6 +130,40 @@ class FinalPlaylistPageState extends State<FinalPlaylistPage> {
                   },
                 ),
               ),
+            ),
+            Text(
+              'Now Playing: ${songList.tracks[currentSongIndex].name} - ${songList.tracks[currentSongIndex].artist}',
+              style: Theme.of(context).textTheme.bodyLarge,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                IconButton(
+                  icon: Icon(
+                    isShuffling ? Icons.shuffle_on : Icons.shuffle,
+                    color: isShuffling ? Colors.blue : Colors.grey,
+                  ),
+                  onPressed: toggleShuffle,
+                ),
+                IconButton(
+                  icon: Icon(
+                    isPlaying ? Icons.pause : Icons.play_arrow,
+                    size: 32,
+                  ),
+                  onPressed: togglePlayPause,
+                ),
+                IconButton(
+                  icon: const Icon(Icons.skip_next),
+                  onPressed: skipNext,
+                ),
+                IconButton(
+                  icon: Icon(
+                    isLooping ? Icons.repeat_one : Icons.repeat,
+                    color: isLooping ? Colors.blue : Colors.grey,
+                  ),
+                  onPressed: toggleLoop,
+                ),
+              ],
             ),
           ]
         )

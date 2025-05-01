@@ -19,7 +19,8 @@ class FinalPlaylistPageState extends State<FinalPlaylistPage> {
     Song('Go With The Flow', 'Queens of the Stone Age'),
     Song('The Strokes', 'Reptilia'),
     Song('Value', 'Ado'),
-    Song('Souvenir ', 'BUMP OF CHICKEN'),
+    Song('Inhaler', 'My Honest Face'),
+    Song('Muse', 'The Small Print'),
   ]);
 
   AudioPlayer? player;
@@ -85,6 +86,20 @@ class FinalPlaylistPageState extends State<FinalPlaylistPage> {
     await playCurrentSong();
   }
 
+  Future<void> skipPrevious() async {
+    if (songList.tracks.isEmpty) return;
+
+    setState(() {
+      if (currentSongIndex == 0) {
+        currentSongIndex = songList.tracks.length - 1;
+      } else {
+        currentSongIndex -= 1;
+      }
+    });
+
+    await playCurrentSong();
+  }
+
   void toggleShuffle() {
     setState(() => isShuffling = !isShuffling);
   }
@@ -144,6 +159,10 @@ class FinalPlaylistPageState extends State<FinalPlaylistPage> {
                     color: isShuffling ? Colors.blue : Colors.grey,
                   ),
                   onPressed: toggleShuffle,
+                ),
+                IconButton(
+                  icon: const Icon(Icons.skip_previous),
+                  onPressed: skipPrevious,
                 ),
                 IconButton(
                   icon: Icon(

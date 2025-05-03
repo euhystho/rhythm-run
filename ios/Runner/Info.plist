@@ -44,6 +44,10 @@
 		<!-- Music Kit required permissions -->
 		<key>NSAppleMusicUsageDescription</key>
 		<string>This app requires access to Apple Music to play songs during workouts.</string>
+		<key>UIBackgroundModes</key>
+		<array>
+			<string>audio</string>
+		</array>
 		<key>UIApplicationSupportsIndirectInputEvents</key>
 		<true />
 		<key>UILaunchStoryboardName</key>

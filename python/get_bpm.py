@@ -280,7 +280,7 @@ class BPMAnalysis:
             best_match = {"track": None, "score": 0}
             
             for track in tracks:
-                track_uri = track.get('id')
+                # track_uri = track.get('id')
                 bpm = round(track.get('b', 0))
                 
                 # Track Name and Artist Name(s) from Tunebat API

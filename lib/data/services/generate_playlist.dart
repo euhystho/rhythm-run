@@ -29,7 +29,7 @@ Future<Playlist> getSimilarSongs(Song song, double lowerThreshold, int limit) as
     // If no tracks found, return an empty playlist
     if (trackElements.isEmpty) {
       print("No similar tracks found");
-      return Playlist([Song("No similar tracks", "")]);
+      return Playlist([Song("", "")]);
     }
     var tracks =
         trackElements.map((element) {
@@ -63,29 +63,10 @@ Future<Playlist> getSimilarSongs(Song song, double lowerThreshold, int limit) as
   } catch (e) {
     print("Error fetching similar songs: $e");
     // Return a fallback playlist with a single song
-    return Playlist([Song("Nothing", "Is Here")]);
+    return Playlist([Song("", "")]);
   }
 }
-Future<>implementPace(String xpLvl) async{
-  final range={
-    "beginer":{
-      'low': (120, 130),
-      'medium': (150, 157),
-      'high': (170, 177)
-    },
-    'intermediate': {
-      'low': (130, 140),
-      'medium': (157, 163),
-      'high': (177, 183)
-    },
-    'advanced': {
-      'low': (140, 150),
-      'medium': (163, 170),
-      'high': (183, 190)
-    }
-  };
-  
-}
+
 // Example usage
 void main() async {
   Song follow = Song("The Prince", "Madeon");

@@ -1,6 +1,5 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
-import '../utils/theme.dart';
 import '../data/types/song.dart';
 
 class FinalPlaylistPage extends StatefulWidget {
@@ -187,27 +186,6 @@ class FinalPlaylistPageState extends State<FinalPlaylistPage> {
           ]
         )
       )
-    );
-  }
-}
-
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      //Toggle the Debug Banner on the side :)
-      debugShowCheckedModeBanner: false,
-      title: 'RhythmRun',
-      theme: RhythmRunTheme.lightTheme,
-      darkTheme: RhythmRunTheme.darkTheme,
-      themeMode: ThemeMode.system,
-      home: const FinalPlaylistPage(),
     );
   }
 }

@@ -5,6 +5,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:rhythmrun/utils/theme.dart';
 import '../data/services/generate_playlist.dart';
 import '../data/types/song.dart';
+import 'final_playlist_screen_8.dart';
 
 class TempPlaylistPage extends StatefulWidget {
   const TempPlaylistPage({super.key});
@@ -332,7 +333,10 @@ class TempPlaylistPageState extends State<TempPlaylistPage> {
                         ),
                         ElevatedButton.icon(
                           onPressed: () {
-                            // navigate to final page
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => FinalPlaylistPage()),
+                            );
                           },
                           icon: FaIcon(FontAwesomeIcons.check),
                           label: Text(

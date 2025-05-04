@@ -10,11 +10,11 @@ Future<Set<String>> pickAudioFile() async{
   String? initialDirectory;
   if(Platform.isAndroid){
     try{
-      bool hasPermission= await _getPermisionAndroid();
+      bool hasPermission= await getPermisionAndroid();
       if(!hasPermission){
         throw('Storage permission denied');
       }
-      Directory? musicDir=await _androidMusicDirectory();
+      Directory? musicDir=await androidMusicDirectory();
       initialDirectory=musicDir?.path??"";
     }
     catch(e){
@@ -23,11 +23,11 @@ Future<Set<String>> pickAudioFile() async{
   }
   else if(Platform.isIOS){
     try{
-      bool hasPermission=await _getPermisionIOS();
+      bool hasPermission=await getPermisionIOS();
       if(!hasPermission){
         throw('Storage permission denied');
       }
-      Directory? musicDir=await _iosMusicDirectory();
+      Directory? musicDir=await iosMusicDirectory();
       initialDirectory=musicDir?.path??"";
     }
     catch(e){
@@ -55,7 +55,7 @@ Future<Set<String>> pickAudioFile() async{
   }
   return audioAssetPaths;
 }
-Future<bool>_getPermisionAndroid() async{
+Future<bool>getPermisionAndroid() async{
   Permission permission;
   if (int.parse(Platform.operatingSystemVersion.split(' ').first) >= 13) {
       permission = Permission.audio;
@@ -69,7 +69,7 @@ Future<bool>_getPermisionAndroid() async{
   }
   return status.isGranted;
 }
-Future<Directory?>_androidMusicDirectory() async{
+Future<Directory?>androidMusicDirectory() async{
     try {
     // Common paths for music on Android
     final externalStorageDir = await getExternalStorageDirectory();
@@ -93,9 +93,9 @@ Future<Directory?>_androidMusicDirectory() async{
   }
   return null;
 }
-Future<bool> _getPermisionIOS() async{
+Future<bool> getPermisionIOS() async{
   return true;
 }
-Future<Directory?>_iosMusicDirectory() async{
+Future<Directory?>iosMusicDirectory() async{
   return null;
 }

@@ -44,8 +44,7 @@ def create_sample_db():
 def generate_playlist(xp_lvl, intensity, duration):
     """
     Generates a playlist based on user choices described below.
-    This method will prioritize xp_lvl and intensity over duration.
-
+    
     Parameters
     ----------
     xp_level: string

@@ -14,7 +14,11 @@ api-keys.json
 .svn/
 .swiftpm/
 migrate_working_dir/
+coverage/
+<<<<<<< HEAD
+=======
 
+>>>>>>> 9ce3db1255555c9493d3f976f1f5d6094674c853
 # IntelliJ related
 *.iml
 *.ipr

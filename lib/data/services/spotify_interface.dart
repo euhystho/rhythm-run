@@ -1,11 +1,21 @@
 import 'package:flutter/services.dart';
+import 'package:dotenv/dotenv.dart' as dotenv;
 import 'package:spotify_sdk/spotify_sdk.dart';
 import '../types/song.dart';
 
-class SpotifyAPI {
+final env = dotenv.DotEnv()..load(['.env']);
+
+class SpotifyInterface {
   SpotifySdk spotify = SpotifySdk();
-  final String clientID = String.fromEnvironment('SPOT_CLIENT_ID');
-  final String redirectURI = String.fromEnvironment('REDIRECT_URL');
+  final String clientID =
+      String.fromEnvironment('SPOT_CLIENT_ID').isNotEmpty
+          ? String.fromEnvironment('SPOT_CLIENT_ID')
+          : env['SPOT_CLIENT_ID'] ?? '';
+  final String clientSecret =
+      String.fromEnvironment('SPOT_CLIENT_SECRET').isNotEmpty
+          ? String.fromEnvironment('SPOT_CLIENT_SECRET')
+          : env['SPOT_CLIENT_SECRET'] ?? '';
+  final String redirectURI = "rhythmrun://callback";
   final List<String> _songQueue = [];
   bool loading = false;
 
@@ -13,7 +23,7 @@ class SpotifyAPI {
     /// Initializes the Spotify API by connecting the Spotify,
     /// then getting the Authentication Token and throws an error if initializing fails
     try {
-      await connectToSpotify();
+      await connectToSpotifySDK();
       await getAuth();
     } catch (e) {
       print('Failed to initialize Spotify');
@@ -50,7 +60,12 @@ class SpotifyAPI {
   Future<void> togglePlayback() async {
     print('Spotify: Toggling playback');
     try {
-      await SpotifySdk.pause();
+      var playerState = await SpotifySdk.getPlayerState();
+      if (playerState != null && playerState.isPaused) {
+        await SpotifySdk.resume();
+      } else if (playerState != null && !playerState.isPaused) {
+        await SpotifySdk.pause();
+      }
     } on PlatformException catch (e) {
       print(e.code);
     } on MissingPluginException {
@@ -93,13 +108,13 @@ class SpotifyAPI {
 
   /// Authentication Methods:
 
-  Future<void> connectToSpotify() async {
+  Future<void> connectToSpotifySDK() async {
     try {
       loading = true;
 
       var result = await SpotifySdk.connectToSpotifyRemote(
-        clientId: const String.fromEnvironment('SPOT_CLIENT_ID'),
-        redirectUrl: const String.fromEnvironment('REDIRECT_URL'),
+        clientId: clientID,
+        redirectUrl: redirectURI,
       );
       // TODO: Put this in a Popup Message :)
       print(
@@ -118,8 +133,8 @@ class SpotifyAPI {
   Future<String> getAuth() async {
     try {
       var authenticationToken = await SpotifySdk.getAccessToken(
-        clientId: const String.fromEnvironment('SPOT_CLIENT_ID'),
-        redirectUrl: const String.fromEnvironment('REDIRECT_URL'),
+        clientId: clientID,
+        redirectUrl: redirectURI,
         scope:
             'app-remote-control, '
             'user-modify-playback-state, '

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rhythmrun/data/services/authentication.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -9,7 +10,8 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  
+  bool _obscurePassword = true;
+  bool _obscureConfirmPassword = true;
   // get the authentication service
   final authService = Authentication();
 
@@ -38,9 +40,13 @@ class _RegisterPageState extends State<RegisterPage> {
       Navigator.pop(context);
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text("Error: $e")));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              e is AuthWeakPasswordException ? e.message : "Error: $e",
+            ),
+          ),
+        );
       }
     }
   }
@@ -48,7 +54,7 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Sign Up")),
+      appBar: AppBar(title: const Text("Register for RhythmRun!")),
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 50),
         children: [
@@ -61,20 +67,50 @@ class _RegisterPageState extends State<RegisterPage> {
           //password
           TextField(
             controller: _passwordController,
-            decoration: const InputDecoration(labelText: "Password"),
-            obscureText: true,
+            decoration: InputDecoration(
+              labelText: "Password",
+              suffixIcon: IconButton(
+                onPressed: () {
+                  setState(() {
+                    _obscurePassword = !_obscurePassword;
+                  });
+                },
+                icon: Icon(
+                  _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                ),
+              ),
+            ),
+            obscureText: _obscurePassword,
           ),
 
           //confirm password
           TextField(
             controller: _confirmPasswordController,
-            decoration: const InputDecoration(labelText: "Confirm Password"),
-            obscureText: true,
+            decoration: InputDecoration(
+              labelText: "Confirm Password",
+              suffixIcon: IconButton(
+                onPressed: () {
+                  setState(() {
+                    _obscureConfirmPassword = !_obscureConfirmPassword;
+                  });
+                },
+                icon: Icon(
+                  _obscureConfirmPassword ? Icons.visibility_off : Icons.visibility,
+                ),
+              ),
+            ),
+            obscureText: _obscureConfirmPassword,
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 30),
 
           //Login button
-          ElevatedButton(onPressed: signUp, child: const Text("Sign Up")),
+          ElevatedButton(
+            onPressed: signUp,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.primary,
+            ),
+            child: const Text("Sign Up"),
+          ),
 
           const SizedBox(height: 12),
         ],

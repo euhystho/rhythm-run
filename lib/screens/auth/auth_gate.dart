@@ -25,7 +25,7 @@ class AuthGate extends StatelessWidget{
         if (session != null){
           return const ProfilePage();
         } else {
-          return const LoginScreenPage();
+          return LoginScreenPage();
         }
       });
   }

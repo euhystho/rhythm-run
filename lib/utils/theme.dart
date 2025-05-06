@@ -38,6 +38,9 @@ class RhythmRunTheme {
   //Apple Music Colors
   static const Color appleMusicRed = Color(0xFFFC3C44);
 
+  //Google Colors
+  
+
   // Theme Data
   static ThemeData get lightTheme {
     return ThemeData(

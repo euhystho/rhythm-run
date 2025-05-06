@@ -5,7 +5,7 @@ import 'package:rhythmrun/screens/auth/auth_gate.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'utils/theme.dart';
 import 'screens/file_upload_screen_2.dart';
-import 'apple_music_test.dart';
+// import 'apple_music_test.dart';
 import 'spotify_test.dart';
 
 // Welcome Page
@@ -86,51 +86,49 @@ class WelcomePageWidget extends StatelessWidget {
                   ),
                 ),
 
-                // Apple Music Button
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 10),
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      // TODO: Implement Apple Music Authentication
-                      print('Apple Music Authentication');
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => AppleMusicPage(),
-                        ),
-                      );
-                    },
-                    icon: Icon(
-                      Icons.apple,
-                      color: Theme.of(context).colorScheme.onSurface,
-                      size: 24,
-                    ),
-                    label: const Text('Import with Apple Music'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: RhythmRunTheme.appleMusicRed,
-                    ),
+                // // Apple Music Button
+                // Padding(
+                //   padding: const EdgeInsets.only(bottom: 10),
+                //   child: ElevatedButton.icon(
+                //     onPressed: () {
+                //       // TODO: Implement Apple Music Authentication
+                //       print('Apple Music Authentication');
+                //       Navigator.push(
+                //         context,
+                //         MaterialPageRoute(
+                //           builder: (context) => AppleMusicPage(),
+                //         ),
+                //       );
+                //     },
+                //     icon: Icon(
+                //       Icons.apple,
+                //       color: Theme.of(context).colorScheme.onSurface,
+                //       size: 24,
+                //     ),
+                //     label: const Text('Import with Apple Music'),
+                //     style: ElevatedButton.styleFrom(
+                //       backgroundColor: RhythmRunTheme.appleMusicRed,
+                //     ),
+                //   ),
+                // ),
+
+                // Create Local Account Button
+                ElevatedButton.icon(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => LocalSongsUploadPage(),
+                      ),
+                    );
+                  },
+                  icon: Icon(
+                    Icons.person_add,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
-                ),
-                Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(40, 16, 40, 0),
-                  // Create Local Account Button
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => LocalSongsUploadPage(),
-                        ),
-                      );
-                    },
-                    icon: Icon(
-                      Icons.person_add,
-                      color: Theme.of(context).colorScheme.onSurface,
-                    ),
-                    label: const Text('Import with Local Music'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Theme.of(context).colorScheme.secondary,
-                    ),
+                  label: const Text('Import with Local Music'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Theme.of(context).colorScheme.secondary,
                   ),
                 ),
 
@@ -150,9 +148,7 @@ class WelcomePageWidget extends StatelessWidget {
                           print('Sign into Existing Account');
                           Navigator.push(
                             context,
-                            MaterialPageRoute(
-                              builder: (context) => AuthGate(),
-                            ),
+                            MaterialPageRoute(builder: (context) => AuthGate()),
                           );
                         },
                         child: Text(
@@ -186,10 +182,11 @@ Future<void> main() async {
   await dotenv.load(fileName: 'assets/.env');
 
   // Fetch Supabase URL and Key from the environment
-  final String supabaseURL = dotenv.env['SUPABASE_URL'] 
-  ?? String.fromEnvironment('SUPABASE_URL');
-  final String supabaseKey = dotenv.env['SUPABASE_ANON_KEY'] 
-  ?? String.fromEnvironment('SUPABASE_ANON_KEY');
+  final String supabaseURL =
+      dotenv.env['SUPABASE_URL'] ?? String.fromEnvironment('SUPABASE_URL');
+  final String supabaseKey =
+      dotenv.env['SUPABASE_ANON_KEY'] ??
+      String.fromEnvironment('SUPABASE_ANON_KEY');
 
   // Initialize Supabase
   await Supabase.initialize(anonKey: supabaseKey, url: supabaseURL);
@@ -202,7 +199,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    
     return MaterialApp(
       //Toggle the Debug Banner on the side :)
       debugShowCheckedModeBanner: false,

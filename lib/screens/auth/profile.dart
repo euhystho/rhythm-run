@@ -31,7 +31,6 @@ class _ProfilePageState extends State<ProfilePage> {
             onPressed: logout, 
             icon: const Icon(Icons.logout)
           )
-
         ]
       ),
       body: Center(child: Text(currentEmail.toString()),)

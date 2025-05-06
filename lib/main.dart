@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:rhythmrun/screens/auth/auth_gate.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'utils/theme.dart';
 import 'screens/file_upload_screen_2.dart';
 import 'apple_music_test.dart';
 import 'spotify_test.dart';
-
 
 // Welcome Page
 class WelcomePageWidget extends StatelessWidget {
@@ -69,9 +71,7 @@ class WelcomePageWidget extends StatelessWidget {
                       print('Spotify Authentication');
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
-                          builder: (context) => SpotifyTest(),
-                        ),
+                        MaterialPageRoute(builder: (context) => SpotifyTest()),
                       );
                     },
                     icon: FaIcon(
@@ -148,6 +148,12 @@ class WelcomePageWidget extends StatelessWidget {
                         onTap: () {
                           // Implement Accounts
                           print('Sign into Existing Account');
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => AuthGate(),
+                            ),
+                          );
                         },
                         child: Text(
                           'Sign In',
@@ -175,7 +181,19 @@ class WelcomePageWidget extends StatelessWidget {
 }
 
 // Main App
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: 'assets/.env');
+
+  // Fetch Supabase URL and Key from the environment
+  final String supabaseURL = dotenv.env['SUPABASE_URL'] 
+  ?? String.fromEnvironment('SUPABASE_URL');
+  final String supabaseKey = dotenv.env['SUPABASE_ANON_KEY'] 
+  ?? String.fromEnvironment('SUPABASE_ANON_KEY');
+
+  // Initialize Supabase
+  await Supabase.initialize(anonKey: supabaseKey, url: supabaseURL);
+
   runApp(const MyApp());
 }
 
@@ -184,6 +202,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    
     return MaterialApp(
       //Toggle the Debug Banner on the side :)
       debugShowCheckedModeBanner: false,

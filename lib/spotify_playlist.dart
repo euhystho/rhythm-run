@@ -1,10 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:flutter_web_auth/flutter_web_auth.dart';
-import 'dart:convert';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:provider/provider.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:rhythmrun/screens/temp_playlist_screen_spotify.dart';
+import 'package:rhythmrun/utils/theme.dart';
+import 'data/services/music/spotify_interface.dart';
+import 'data/types/song.dart';
 
-void main() {
-  runApp(const MyApp());
+// Main App
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: 'assets/.env');
+
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => SpotifyAPIAuth()..loadTokens(),
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -13,458 +27,334 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Spotify Playlist Importer',
-      theme: ThemeData(
-        primarySwatch: Colors.green,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      home: const SpotifyPlaylistScreen(),
+      title: 'Spotify SpotifyPlaylist Importer',
+      theme: ThemeData(primarySwatch: Colors.blue),
+      home: HomeScreen(),
     );
   }
 }
 
-class SpotifyPlaylistScreen extends StatefulWidget {
-  const SpotifyPlaylistScreen({super.key});
+// Home Screen
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
 
   @override
-  _SpotifyPlaylistScreenState createState() => _SpotifyPlaylistScreenState();
+  State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _SpotifyPlaylistScreenState extends State<SpotifyPlaylistScreen> {
-  final String clientId = String.fromEnvironment('SPOT_CLIENT_ID'); // Replace with your Spotify Client ID
-  final String redirectUri = 'rhythmrun://callback'; // Your registered redirect URI
-  String? accessToken;
-  List<Playlist> playlists = [];
-  List<Track> tracks = [];
+class _HomeScreenState extends State<HomeScreen> {
+  Set<int> selectedIndices = {};
+  List<SpotifyPlaylist>? playlists;
   bool isLoading = false;
-  String selectedPlaylistName = '';
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  Future<void> _loadPlaylists() async {
+    final authProvider = Provider.of<SpotifyAPIAuth>(context, listen: false);
+    if (authProvider.isAuthenticated) {
+      setState(() {
+        isLoading = true;
+      });
+      try {
+        final loaded = await fetchPlaylists(
+          authProvider.accessToken!,
+          authProvider,
+        );
+        setState(() {
+          playlists = loaded;
+        });
+      } catch (e) {
+        setState(() {
+          playlists = [];
+        });
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error: $e')));
+      } finally {
+        setState(() {
+          isLoading = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _importSelectedPlaylists() async {
+    final authProvider = Provider.of<SpotifyAPIAuth>(context, listen: false);
+    setState(() {
+      isLoading = true;
+    });
+    try {
+      // Fetch tracks for each selected playlist and store in the playlist
+      for (final i in selectedIndices) {
+        final playlist = playlists![i];
+        final tracks = await fetchTracks(
+          authProvider.accessToken!,
+          playlist.id,
+          authProvider,
+        );
+        playlist.setTracks(tracks);
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Error importing playlists: $e')));
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+      // TODO: Add the BPM Analysis step here?
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => TempPlaylistSpotifyPage(
+            importedSongs: selectedIndices
+                .expand((index) => playlists![index].tracks ?? [])
+                .cast<StreamableSong>()
+                .toList(),
+          ),
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(tracks.isEmpty ? 'Spotify Playlists' : selectedPlaylistName),
-        actions: [
-          if (tracks.isNotEmpty)
-            IconButton(
-              icon: const Icon(Icons.arrow_back),
-              onPressed: () {
-                setState(() {
-                  tracks = [];
-                });
-              },
-            ),
-        ],
-      ),
-      body: isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : accessToken == null
-              ? _buildLoginView()
-              : tracks.isNotEmpty
-                  ? _buildTrackList()
-                  : _buildPlaylistsView(),
-      floatingActionButton: accessToken == null
-          ? null
-          : FloatingActionButton(
-              child: const Icon(Icons.refresh),
-              onPressed: () {
-                if (tracks.isEmpty) {
-                  _fetchPlaylists();
-                } else {
-                  _fetchPlaylistTracks(tracks[0].playlistId);
-                }
-              },
-            ),
-    );
-  }
+    final authProvider = Provider.of<SpotifyAPIAuth>(context);
 
-  Widget _buildLoginView() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Image.network(
-            'https://storage.googleapis.com/pr-newsroom-wp/1/2018/11/Spotify_Logo_RGB_Green.png',
-            height: 80,
+    Widget connectCard = Padding(
+      padding: const EdgeInsets.all(16),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(12),
+        onTap: () async {
+          try {
+            await authProvider.authenticate();
+            await _loadPlaylists();
+          } catch (e) {
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text('Error: $e')));
+          }
+        },
+        child: Container(
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.secondaryContainer,
+            borderRadius: BorderRadius.circular(12),
           ),
-          const SizedBox(height: 30),
-          const Text(
-            'Import your Spotify playlists',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 10),
-          const Text(
-            'Connect your Spotify account to access your playlists',
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 16),
-          ),
-          const SizedBox(height: 30),
-          ElevatedButton.icon(
-            icon: const Icon(Icons.login),
-            label: const Text('Connect with Spotify'),
-            style: ElevatedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-            ),
-            onPressed: _authenticate,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildPlaylistsView() {
-    return playlists.isEmpty
-        ? Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Row(
               children: [
-                const Text(
-                  'No playlists found',
-                  style: TextStyle(fontSize: 18),
+                FaIcon(
+                  FontAwesomeIcons.spotify,
+                  color: RhythmRunTheme.spotifyGreen,
+                  size: 24,
                 ),
-                const SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: _fetchPlaylists,
-                  child: const Text('Refresh Playlists'),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Connect with Spotify',
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(fontWeight: FontWeight.w600),
+                      ),
+                      Text(
+                        'Import your playlists from Spotify',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color:
+                              Theme.of(
+                                context,
+                              ).colorScheme.onSecondaryContainer,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
-          )
-        : ListView.builder(
-            itemCount: playlists.length,
-            itemBuilder: (context, index) {
-              final playlist = playlists[index];
-              return ListTile(
-                leading: playlist.imageUrl != null
-                    ? ClipRRect(
-                        borderRadius: BorderRadius.circular(4),
-                        child: Image.network(
-                          playlist.imageUrl!,
-                          width: 56,
-                          height: 56,
-                          fit: BoxFit.cover,
-                        ),
-                      )
-                    : Container(
-                        width: 56,
-                        height: 56,
-                        color: Colors.grey[300],
-                        child: const Icon(Icons.music_note),
-                      ),
-                title: Text(playlist.name),
-                subtitle: Text('${playlist.trackCount} tracks'),
-                onTap: () => _fetchPlaylistTracks(playlist.id),
-              );
-            },
-          );
-  }
-
-  Widget _buildTrackList() {
-    return Column(
-      children: [
-        Expanded(
-          child: ListView.builder(
-            itemCount: tracks.length,
-            itemBuilder: (context, index) {
-              final track = tracks[index];
-              return ListTile(
-                leading: track.albumImageUrl != null
-                    ? ClipRRect(
-                        borderRadius: BorderRadius.circular(4),
-                        child: Image.network(
-                          track.albumImageUrl!,
-                          width: 56,
-                          height: 56,
-                          fit: BoxFit.cover,
-                        ),
-                      )
-                    : Container(
-                        width: 56,
-                        height: 56,
-                        color: Colors.grey[300],
-                        child: const Icon(Icons.music_note),
-                      ),
-                title: Text(
-                  track.name,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                subtitle: Text(
-                  track.artists.join(', '),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                trailing: Text(
-                  _formatDuration(track.durationMs),
-                  style: TextStyle(color: Colors.grey[600]),
-                ),
-              );
-            },
           ),
         ),
-        Container(
-          padding: const EdgeInsets.all(16),
-          color: Colors.grey[100],
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                '${tracks.length} songs',
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
-              Text(
-                'Total time: ${_formatTotalDuration()}',
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
-            ],
-          ),
-        ),
-      ],
+      ),
     );
-  }
 
-  Future<void> _authenticate() async {
-    setState(() {
-      isLoading = true;
-    });
-
-    final authorizeUrl = Uri.https('accounts.spotify.com', '/authorize', {
-      'client_id': clientId,
-      'response_type': 'token',
-      'redirect_uri': redirectUri,
-      'scope': 'playlist-read-private playlist-read-collaborative',
-    });
-
-    try {
-      final result = await FlutterWebAuth.authenticate(
-        url: authorizeUrl.toString(),
-        callbackUrlScheme: 'myapp',
-      );
-
-      final Uri resultUri = Uri.parse(result);
-      final fragment = resultUri.fragment;
-      final params = Uri.splitQueryString(fragment);
-      final token = params['access_token'];
-
-      setState(() {
-        accessToken = token;
-        isLoading = false;
-      });
-
-      _fetchPlaylists();
-    } catch (e) {
-      setState(() {
-        isLoading = false;
-      });
-      _showError('Authentication failed');
-    }
-  }
-
-  Future<void> _fetchPlaylists() async {
-    if (accessToken == null) return;
-
-    setState(() {
-      isLoading = true;
-    });
-
-    try {
-      final response = await http.get(
-        Uri.parse('https://api.spotify.com/v1/me/playlists?limit=50'),
-        headers: {
-          'Authorization': 'Bearer $accessToken',
-        },
-      );
-
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        final items = data['items'] as List;
-
-        setState(() {
-          playlists = items.map((item) {
-            String? imageUrl;
-            if (item['images'] != null && (item['images'] as List).isNotEmpty) {
-              imageUrl = item['images'][0]['url'];
-            }
-
-            return Playlist(
-              id: item['id'],
-              name: item['name'],
-              trackCount: item['tracks']['total'],
-              imageUrl: imageUrl,
-            );
-          }).toList();
-          isLoading = false;
-        });
-      } else if (response.statusCode == 401) {
-        // Token expired
-        setState(() {
-          accessToken = null;
-          isLoading = false;
-        });
-        _showError('Session expired. Please login again.');
-      } else {
-        setState(() {
-          isLoading = false;
-        });
-        _showError('Failed to load playlists');
-      }
-    } catch (e) {
-      setState(() {
-        isLoading = false;
-      });
-      _showError('Network error');
-    }
-  }
-
-  Future<void> _fetchPlaylistTracks(String playlistId) async {
-    if (accessToken == null) return;
-
-    setState(() {
-      isLoading = true;
-    });
-
-    try {
-      // First, get the playlist name
-      final playlistResponse = await http.get(
-        Uri.parse('https://api.spotify.com/v1/playlists/$playlistId'),
-        headers: {
-          'Authorization': 'Bearer $accessToken',
-        },
-      );
-      
-      if (playlistResponse.statusCode == 200) {
-        final playlistData = jsonDecode(playlistResponse.body);
-        selectedPlaylistName = playlistData['name'];
-      }
-
-      // Then get the tracks
-      final response = await http.get(
-        Uri.parse('https://api.spotify.com/v1/playlists/$playlistId/tracks'),
-        headers: {
-          'Authorization': 'Bearer $accessToken',
-        },
-      );
-
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        final items = data['items'] as List;
-
-        setState(() {
-          tracks = items.map((item) {
-            final track = item['track'];
-            if (track == null) {
-              // Some items might be null or missing track data
-              return Track(
-                id: 'unknown',
-                name: 'Unknown Track',
-                artists: ['Unknown Artist'],
-                durationMs: 0,
-                albumImageUrl: null,
-                playlistId: playlistId,
-              );
-            }
-
-            String? albumImageUrl;
-            if (track['album'] != null && 
-                track['album']['images'] != null && 
-                (track['album']['images'] as List).isNotEmpty) {
-              albumImageUrl = track['album']['images'][0]['url'];
-            }
-
-            final artistsList = (track['artists'] as List)
-                .map((artist) => artist['name'] as String)
-                .toList();
-
-            return Track(
-              id: track['id'],
-              name: track['name'],
-              artists: artistsList,
-              durationMs: track['duration_ms'],
-              albumImageUrl: albumImageUrl,
-              playlistId: playlistId,
-            );
-          }).toList();
-          isLoading = false;
-        });
-      } else if (response.statusCode == 401) {
-        // Token expired
-        setState(() {
-          accessToken = null;
-          isLoading = false;
-        });
-        _showError('Session expired. Please login again.');
-      } else {
-        setState(() {
-          isLoading = false;
-        });
-        _showError('Failed to load tracks');
-      }
-    } catch (e) {
-      setState(() {
-        isLoading = false;
-      });
-      _showError('Network error');
-    }
-  }
-
-  void _showError(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: Colors.red,
+    return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        title: Text(
+          'Import Spotify Playlists',
+          style: Theme.of(
+            context,
+          ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w600),
+        ),
+        centerTitle: true,
+        elevation: 0,
+        actions: [],
+      ),
+      body: SafeArea(
+        child: Column(
+          children: [
+            // Show connectCard only if not authenticated, or playlists are not loaded or empty
+            if (!authProvider.isAuthenticated ||
+                playlists == null ||
+                playlists!.isEmpty)
+              connectCard,
+            if (authProvider.isAuthenticated && playlists != null) ...[
+              if (playlists!.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 24, 16, 8),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      'Select playlists to import',
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                  ),
+                ),
+              Expanded(
+                child:
+                    isLoading
+                        ? Center(
+                          child: SpinKitFadingCircle(
+                            color: Theme.of(context).colorScheme.primary,
+                            size: 40,
+                          ),
+                        )
+                        : (playlists == null
+                            ? const SizedBox.shrink()
+                            : playlists!.isEmpty
+                            ? Center(child: Text('No playlists found'))
+                            : ListView.builder(
+                              padding: EdgeInsets.zero,
+                              itemCount: playlists!.length,
+                              itemBuilder: (context, index) {
+                                final playlist = playlists![index];
+                                final isSelected = selectedIndices.contains(
+                                  index,
+                                );
+                                return Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 8,
+                                  ),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color:
+                                          Theme.of(
+                                            context,
+                                          ).colorScheme.secondaryContainer,
+                                      borderRadius: BorderRadius.circular(8),
+                                      border:
+                                          isSelected
+                                              ? Border.all(
+                                                color:
+                                                    Theme.of(
+                                                      context,
+                                                    ).colorScheme.primary,
+                                                width: 2,
+                                              )
+                                              : null,
+                                    ),
+                                    child: ListTile(
+                                      leading: ClipRRect(
+                                        borderRadius: BorderRadius.circular(8),
+                                        child:
+                                            playlist.imageURL.isNotEmpty
+                                                ? Image.network(
+                                                  playlist.imageURL,
+                                                  width: 50,
+                                                  height: 50,
+                                                  fit: BoxFit.cover,
+                                                )
+                                                : Container(
+                                                  width: 50,
+                                                  height: 50,
+                                                  color: Colors.grey[300],
+                                                  child: Icon(Icons.music_note),
+                                                ),
+                                      ),
+                                      title: Text(
+                                        playlist.name,
+                                        style: Theme.of(
+                                          context,
+                                        ).textTheme.bodyLarge?.copyWith(
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                      subtitle: Text(
+                                        '${playlist.trackCount} songs',
+                                        style: Theme.of(
+                                          context,
+                                        ).textTheme.bodySmall?.copyWith(
+                                          color:
+                                              Theme.of(
+                                                context,
+                                              ).colorScheme.secondary,
+                                        ),
+                                      ),
+                                      trailing: Checkbox(
+                                        value: isSelected,
+                                        onChanged: (checked) {
+                                          setState(() {
+                                            if (checked == true) {
+                                              selectedIndices.add(index);
+                                            } else {
+                                              selectedIndices.remove(index);
+                                            }
+                                          });
+                                        },
+                                        activeColor: Color(0xFF1DB954),
+                                      ),
+                                      onTap: () {
+                                        setState(() {
+                                          if (isSelected) {
+                                            selectedIndices.remove(index);
+                                          } else {
+                                            selectedIndices.add(index);
+                                          }
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                );
+                              },
+                            )),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: SizedBox(
+                  width: double.infinity,
+                  height: 50,
+                  child: ElevatedButton(
+                    onPressed:
+                        selectedIndices.isNotEmpty
+                            ? _importSelectedPlaylists
+                            : null,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Theme.of(context).colorScheme.primary,
+                      disabledBackgroundColor: Colors.grey[400],
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: Text(
+                      'Continue',
+                      style: Theme.of(
+                        context,
+                      ).textTheme.titleMedium?.copyWith(color: Colors.white),
+                    ),
+                  ),
+                ),
+              ),
+            ], // end if authenticated and playlists != null
+          ],
+        ),
       ),
     );
   }
-
-  String _formatDuration(int milliseconds) {
-    final int seconds = (milliseconds / 1000).floor();
-    final int minutes = (seconds / 60).floor();
-    final int remainingSeconds = seconds % 60;
-    return '$minutes:${remainingSeconds.toString().padLeft(2, '0')}';
-  }
-
-  String _formatTotalDuration() {
-    final int totalMs = tracks.fold(0, (sum, track) => sum + track.durationMs);
-    final int totalSeconds = (totalMs / 1000).floor();
-    final int hours = (totalSeconds / 3600).floor();
-    final int minutes = ((totalSeconds % 3600) / 60).floor();
-    
-    if (hours > 0) {
-      return '$hours hr ${minutes.toString()} min';
-    } else {
-      return '$minutes min';
-    }
-  }
-}
-
-class Playlist {
-  final String id;
-  final String name;
-  final int trackCount;
-  final String? imageUrl;
-
-  Playlist({
-    required this.id,
-    required this.name,
-    required this.trackCount,
-    this.imageUrl,
-  });
-}
-
-class Track {
-  final String id;
-  final String name;
-  final List<String> artists;
-  final int durationMs;
-  final String? albumImageUrl;
-  final String playlistId;
-
-  Track({
-    required this.id,
-    required this.name,
-    required this.artists,
-    required this.durationMs,
-    this.albumImageUrl,
-    required this.playlistId,
-  });
 }

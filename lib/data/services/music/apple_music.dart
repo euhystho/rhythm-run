@@ -1,6 +1,6 @@
 import 'package:music_kit/music_kit.dart';
 import 'dart:async';
-import '../types/song.dart';
+import '../../types/song.dart';
 
 
 class AppleMusicAPI {

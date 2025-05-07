@@ -36,6 +36,14 @@
 					<string>rhythmrun</string>
 				</array>
 			</dict>
+			<dict>
+				<key>CFBundleTypeRole</key>
+				<string>Editor</string>
+				<key>CFBundleURLSchemes</key>
+				<array>
+					<string>com.googleusercontent.apps.1066195414414-khcfguacook3mha8gkfs85ucfg6djbsr</string>
+				</array>
+			</dict>
 		</array>
 		<key>LSRequiresIPhoneOS</key>
 		<true />
@@ -82,16 +90,5 @@
 			<key>NSAllowsArbitraryLoads</key>
 			<true />
 		</dict>
-		<key>CFBundleURLTypes</key>
-		<array>
-			<dict>
-				<key>CFBundleTypeRole</key>
-				<string>Editor</string>
-				<key>CFBundleURLSchemes</key>
-				<array>
-					<string>com.googleusercontent.apps.1066195414414-khcfguacook3mha8gkfs85ucfg6djbsr</string>
-				</array>
-			</dict>
-		</array>
 	</dict>
 </plist>

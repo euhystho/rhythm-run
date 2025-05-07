@@ -43,11 +43,9 @@ class SupaDatabase extends Database {
           ? String.fromEnvironment('SUPABASE_ANON_KEY')
           : env['SUPABASE_ANON_KEY'] ?? '';
 
-  
   @override
-  
   Future<void> openDB() async {
-  // Opens the Client for Supabase
+    // Opens the Client for Supabase
     _client = SupabaseClient(supabaseURL, supabaseKey);
 
     //Checks if the Authentication has changed and puts in the session:
@@ -87,8 +85,8 @@ class SupaDatabase extends Database {
 
   @override
   Future<AnalyzedSong?> getSong(String artistName, String trackName) async {
-  // Tries to connect to the Supabase using the SupabaseClient
-  // Searches via artistName and trackName to find the song
+    // Tries to connect to the Supabase using the SupabaseClient
+    // Searches via artistName and trackName to find the song
     try {
       final response =
           await _client

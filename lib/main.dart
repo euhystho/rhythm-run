@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:rhythmrun/data/services/music/spotify_interface.dart';
 import 'package:rhythmrun/screens/auth/auth_gate.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:provider/provider.dart';
 import 'utils/theme.dart';
 import 'screens/file_upload_screen_2.dart';
 // import 'apple_music_test.dart';
-import 'spotify_test.dart';
+import 'spotify_playlist.dart';
 
 // Welcome Page
 class WelcomePageWidget extends StatelessWidget {
@@ -71,7 +73,8 @@ class WelcomePageWidget extends StatelessWidget {
                       print('Spotify Authentication');
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => SpotifyTest()),
+                        MaterialPageRoute(builder: (context) => HomeScreen()
+                        ),
                       );
                     },
                     icon: FaIcon(
@@ -191,7 +194,12 @@ Future<void> main() async {
   // Initialize Supabase
   await Supabase.initialize(anonKey: supabaseKey, url: supabaseURL);
 
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => SpotifyAPIAuth()..loadTokens(),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {

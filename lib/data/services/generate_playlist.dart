@@ -5,24 +5,40 @@ import 'package:xml/xml.dart' as xml;
 
 final env = dotenv.DotEnv()..load(['.env']);
 
-Future<Playlist> getSimilarSongs(Song song, double lowerThreshold, int limit) async {
-  final tempApiKey = const String.fromEnvironment('LASTFM_API_KEY', defaultValue: '');
-  final tempSharedSecret = const String.fromEnvironment('LASTFM_SHARED_SECRET', defaultValue: '');
+Future<Playlist> getSimilarSongs(
+  Song song,
+  double lowerThreshold,
+  int limit,
+) async {
+  final tempApiKey = const String.fromEnvironment(
+    'LASTFM_API_KEY',
+    defaultValue: '',
+  );
+  final tempSharedSecret = const String.fromEnvironment(
+    'LASTFM_SHARED_SECRET',
+    defaultValue: '',
+  );
 
-  final apiKey = (tempApiKey.isNotEmpty ? tempApiKey : (env['LASTFM_API_KEY'] ?? ''));
-  final sharedSecret = (tempSharedSecret.isNotEmpty) ? tempSharedSecret : env['LASTFM_SHARED_SECRET'];
+  final apiKey =
+      (tempApiKey.isNotEmpty ? tempApiKey : (env['LASTFM_API_KEY'] ?? ''));
+  final sharedSecret =
+      (tempSharedSecret.isNotEmpty)
+          ? tempSharedSecret
+          : env['LASTFM_SHARED_SECRET'];
 
   LastFM lastfm = LastFMUnauthorized(apiKey, sharedSecret);
 
   try {
     // Make the API call
-    var similarSongs = await lastfm.read('track.getSimilar', {
-      "artist": song.artist,
-      "track": song.name,
-      "limit": limit.toString(),
-      "api_key": apiKey
-    }).timeout(const Duration(seconds: 5));
-    
+    var similarSongs = await lastfm
+        .read('track.getSimilar', {
+          "artist": song.artist,
+          "track": song.name,
+          "limit": limit.toString(),
+          "api_key": apiKey,
+        })
+        .timeout(const Duration(seconds: 5));
+
     // Get all track elements directly from the LastFM response
     final trackElements = similarSongs.findAllElements('track');
 
@@ -32,32 +48,35 @@ Future<Playlist> getSimilarSongs(Song song, double lowerThreshold, int limit) as
       return Playlist([Song("", "")]);
     }
     var tracks =
-        trackElements.map((element) {
-          try {
-            // Extract the track name
-            final name = element.findElements('name').first.innerText;
+        trackElements
+            .map((element) {
+              try {
+                // Extract the track name
+                final name = element.findElements('name').first.innerText;
 
-            // Extract the artist name
-            final artistElement = element.findElements('artist').first;
-            final artistName =
-                artistElement.findElements('name').first.innerText;
+                // Extract the artist name
+                final artistElement = element.findElements('artist').first;
+                final artistName =
+                    artistElement.findElements('name').first.innerText;
 
-            // Extract the match score and mbid:
-            final match =
-                double.tryParse(
-                  element.findElements('match').first.innerText,
-                ) ??
-                0.0;
-            if (match >= lowerThreshold) {
-              // Create and return a SimilarSong object
-              return SimilarSong(song, name, artistName, match);
-            }
-          } catch (e) {
-            print("Error parsing track: $e");
-          }
-          // Return null if parsing fails or match is below threshold
-          return null;
-        }).whereType<Song>().toList();
+                // Extract the match score and mbid:
+                final match =
+                    double.tryParse(
+                      element.findElements('match').first.innerText,
+                    ) ??
+                    0.0;
+                if (match >= lowerThreshold) {
+                  // Create and return a SimilarSong object
+                  return SimilarSong(song, name, artistName, match);
+                }
+              } catch (e) {
+                print("Error parsing track: $e");
+              }
+              // Return null if parsing fails or match is below threshold
+              return null;
+            })
+            .whereType<Song>()
+            .toList();
 
     return Playlist(tracks); // Return the playlist
   } catch (e) {

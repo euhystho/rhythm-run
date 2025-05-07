@@ -97,15 +97,15 @@ class TempPlaylistPageState extends State<TempPlaylistPage> {
 
   void addSongToPlaylist(Song song) {
     setState(() {
-      songList.tracks.add(song);
-      suggestedSongs.tracks.removeWhere((s) => s.name == song.name && s.artist == song.artist);
+      songList.addSong(song);
+      suggestedSongs.removeSong(song);
     });
   }
 
   void removeSongFromPlaylist(Song song) {
     setState(() {
-      songList.tracks.removeWhere((s) => s.name == song.name && s.artist == song.artist);
-      suggestedSongs.tracks.add(song);
+      songList.removeSong(song);
+      suggestedSongs.addSong(song);
     });
   }
 

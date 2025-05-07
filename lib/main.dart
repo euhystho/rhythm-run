@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:rhythmrun/data/services/music/spotify_interface.dart';
+import 'package:rhythmrun/screens/auth/auth_gate.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:provider/provider.dart';
 import 'utils/theme.dart';
 import 'screens/file_upload_screen_2.dart';
-import 'apple_music_test.dart';
-import 'spotify_test.dart';
-
+// import 'apple_music_test.dart';
+import 'spotify_playlist.dart';
 
 // Welcome Page
 class WelcomePageWidget extends StatelessWidget {
@@ -69,8 +73,7 @@ class WelcomePageWidget extends StatelessWidget {
                       print('Spotify Authentication');
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
-                          builder: (context) => SpotifyTest(),
+                        MaterialPageRoute(builder: (context) => HomeScreen()
                         ),
                       );
                     },
@@ -86,51 +89,49 @@ class WelcomePageWidget extends StatelessWidget {
                   ),
                 ),
 
-                // Apple Music Button
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 10),
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      // TODO: Implement Apple Music Authentication
-                      print('Apple Music Authentication');
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => AppleMusicPage(),
-                        ),
-                      );
-                    },
-                    icon: Icon(
-                      Icons.apple,
-                      color: Theme.of(context).colorScheme.onSurface,
-                      size: 24,
-                    ),
-                    label: const Text('Import with Apple Music'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: RhythmRunTheme.appleMusicRed,
-                    ),
+                // // Apple Music Button
+                // Padding(
+                //   padding: const EdgeInsets.only(bottom: 10),
+                //   child: ElevatedButton.icon(
+                //     onPressed: () {
+                //       // TODO: Implement Apple Music Authentication
+                //       print('Apple Music Authentication');
+                //       Navigator.push(
+                //         context,
+                //         MaterialPageRoute(
+                //           builder: (context) => AppleMusicPage(),
+                //         ),
+                //       );
+                //     },
+                //     icon: Icon(
+                //       Icons.apple,
+                //       color: Theme.of(context).colorScheme.onSurface,
+                //       size: 24,
+                //     ),
+                //     label: const Text('Import with Apple Music'),
+                //     style: ElevatedButton.styleFrom(
+                //       backgroundColor: RhythmRunTheme.appleMusicRed,
+                //     ),
+                //   ),
+                // ),
+
+                // Create Local Account Button
+                ElevatedButton.icon(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => LocalSongsUploadPage(),
+                      ),
+                    );
+                  },
+                  icon: Icon(
+                    Icons.person_add,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
-                ),
-                Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(40, 16, 40, 0),
-                  // Create Local Account Button
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => LocalSongsUploadPage(),
-                        ),
-                      );
-                    },
-                    icon: Icon(
-                      Icons.person_add,
-                      color: Theme.of(context).colorScheme.onSurface,
-                    ),
-                    label: const Text('Import with Local Music'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Theme.of(context).colorScheme.secondary,
-                    ),
+                  label: const Text('Import with Local Music'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Theme.of(context).colorScheme.secondary,
                   ),
                 ),
 
@@ -148,6 +149,10 @@ class WelcomePageWidget extends StatelessWidget {
                         onTap: () {
                           // Implement Accounts
                           print('Sign into Existing Account');
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => AuthGate()),
+                          );
                         },
                         child: Text(
                           'Sign In',
@@ -175,8 +180,26 @@ class WelcomePageWidget extends StatelessWidget {
 }
 
 // Main App
-void main() {
-  runApp(const MyApp());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: 'assets/.env');
+
+  // Fetch Supabase URL and Key from the environment
+  final String supabaseURL =
+      dotenv.env['SUPABASE_URL'] ?? String.fromEnvironment('SUPABASE_URL');
+  final String supabaseKey =
+      dotenv.env['SUPABASE_ANON_KEY'] ??
+      String.fromEnvironment('SUPABASE_ANON_KEY');
+
+  // Initialize Supabase
+  await Supabase.initialize(anonKey: supabaseKey, url: supabaseURL);
+
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => SpotifyAPIAuth()..loadTokens(),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {

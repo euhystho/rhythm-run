@@ -16,6 +16,7 @@ class RhythmRunTheme {
     secondary: Color(0xFF4A90E2),
     tertiary: Color(0xFF8e44ad),
     surface: Color(0xFFF9F9F9),
+    onSecondaryContainer: Color(0xFF666666),
     secondaryContainer: Color(0xFFFFFFFF),
     onSurface: Colors.black
   );
@@ -25,6 +26,7 @@ class RhythmRunTheme {
     secondary: Color(0xFF3B78D2),
     tertiary: Color(0xFF732D91),
     surface: Color(0xFF1C1C1C),
+    onSecondaryContainer: Color(0xFFB3B3B3),
     secondaryContainer: Color(0xFF2C2C2C),
     onSurface: Colors.white
   );
@@ -37,6 +39,9 @@ class RhythmRunTheme {
 
   //Apple Music Colors
   static const Color appleMusicRed = Color(0xFFFC3C44);
+
+  //Google Colors
+  
 
   // Theme Data
   static ThemeData get lightTheme {

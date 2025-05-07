@@ -2,7 +2,7 @@ import 'package:spotify_sdk/enums/repeat_mode_enum.dart';
 
 import 'spotify_interface.dart';
 import 'apple_music.dart';
-import '../types/song.dart';
+import '../../types/song.dart';
 
 enum MusicService { spotify, appleMusic }
 

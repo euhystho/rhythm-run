@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:logger/logger.dart';
 import 'package:spotify_sdk/models/connection_status.dart';
-import 'package:spotify_sdk/models/crossfade_state.dart';
 import 'package:spotify_sdk/models/image_uri.dart';
 import 'package:spotify_sdk/models/player_context.dart';
 import 'package:spotify_sdk/models/player_state.dart';
@@ -34,7 +33,6 @@ class SpotifyTestState extends State<SpotifyTest> {
     ),
   );
 
-  CrossfadeState? crossfadeState;
   late ImageUri? currentTrackImageUri;
   final List<String> _playerQueue = [];
 
@@ -186,41 +184,6 @@ class SpotifyTestState extends State<SpotifyTest> {
                 ElevatedButton(
                   onPressed: switchToLocalDevice,
                   child: const Text('switch to local device'),
-                ),
-              ],
-            ),
-            const Divider(),
-            Text(
-              'Crossfade State',
-              style: Theme.of(context).textTheme.headlineSmall,
-            ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  'Status',
-                  style: Theme.of(context).textTheme.titleSmall,
-                ),
-                Text(
-                    crossfadeState?.isEnabled == true ? 'Enabled' : 'Disabled'),
-                Padding(
-                  padding: const EdgeInsets.only(top: 8.0),
-                  child: Text(
-                    'Duration',
-                    style: Theme.of(context).textTheme.titleSmall,
-                  ),
-                ),
-                Text(crossfadeState?.duration.toString() ?? 'Unknown'),
-                Row(
-                  children: <Widget>[
-                    ElevatedButton(
-                      onPressed: getCrossfadeState,
-                      child: const Text(
-                        'get crossfade state',
-                      ),
-                    ),
-                  ],
                 ),
               ],
             ),
@@ -572,19 +535,6 @@ class SpotifyTestState extends State<SpotifyTest> {
   Future getPlayerState() async {
     try {
       return await SpotifySdk.getPlayerState();
-    } on PlatformException catch (e) {
-      setStatus(e.code, message: e.message);
-    } on MissingPluginException {
-      setStatus('not implemented');
-    }
-  }
-
-  Future getCrossfadeState() async {
-    try {
-      var crossfadeStateValue = await SpotifySdk.getCrossFadeState();
-      setState(() {
-        crossfadeState = crossfadeStateValue;
-      });
     } on PlatformException catch (e) {
       setStatus(e.code, message: e.message);
     } on MissingPluginException {

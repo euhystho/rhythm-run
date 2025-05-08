@@ -8,6 +8,6 @@ title: "Final Presentation"
 # Demo Video:
 <div style="max-width: 100%; aspect-ratio: 16/9;">
   <video width="100%" controls>
-    <source src="/assets/videos/demo.mp4" type="video/mp4">
+    <source src="/videos/demo.mp4" type="video/mp4">
   </video>
 </div>

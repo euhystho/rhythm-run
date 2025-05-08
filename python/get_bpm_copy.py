@@ -1,4 +1,4 @@
-import sqlite3
+import traceback
 import cloudscraper, requests
 import urllib.parse
 from ratelimit import limits, sleep_and_retry, RateLimitException
@@ -226,39 +226,48 @@ class BPMAnalysis:
             raise TuneBatError(e)
 
 if __name__ == "__main__":
-    #step1: receive the request from dart and then process the songs.
-    #packet json:
-    '''{"action": "Request",
-        "artists":[],
-        "tracks":[],
-        }
-    '''
-    odata={"artists":[],
-           "tracks":[],
-           #option: error or get bpm
-           }  #input data or output data
+    odata = {
+        "artists": [],
+        "tracks": [],
+        "bpms": []
+    }
+    
     try:
-        input_json=sys.stdin.read()
-        idata=json.loads(input_json) #input data
-        artist_list=idata["artists"]
-        track_list=idata["tracks"]
+        # Read all input from stdin (important for large data)
+        input_json = sys.stdin.read()
+        
+        # Parse input data
+        idata = json.loads(input_json)
+        artist_list = idata.get("artists", [])
+        track_list = idata.get("tracks", [])
+        
+        # Validate input
+        if len(artist_list) != len(track_list):
+            raise ValueError("Artists and tracks lists must be of equal length")
+            
+        if not artist_list or not track_list:
+            raise ValueError("Empty artists or tracks list provided")
+        
+        # Process data
         analysis = BPMAnalysis()
-        ###artist_list = ["Lady Gaga"] * 16
-        #track_list = ["Disease", "Abracadabra", "Garden of Eden", "Perfect Celebrity", "Vanish Into You",
-        #               "Killah (feat. Gesaffelstein)", "Zombieboy", "LoveDrug", "How Bad Do U Want Me", "Don't Call Tonight", 
-        #              "Shadow of a Man", "The Beast", "Blade of Grass", "Die With A Smile", "LoveGame", "Applause"]
-        #song_URI = "7DX4dnqhCQpykHwzLrmA6O"
-        #is_spotify = False
         for artist, track in zip(artist_list, track_list):
             bpm = analysis.getBPM(artist, track)
-            print(f"{track} by {artist} has a BPM of {bpm}")
+            #print(f"{track} by {artist} has a BPM of {bpm}", file=sys.stderr)
             odata["artists"].append(artist)
             odata["tracks"].append(track)
             odata["bpms"].append(bpm)
+        out=json.dumps(odata,ensure_ascii=False)
+        sys.stdout.write(out+"\n")
+        sys.stdout.flush()
     except Exception as e:
-        odata["error"]=str(e)
+        error_message={"error":str(e)}
+        sys.stdout.write(json.dums(error_message)+"\n")
+        sys.stdout.flush()
     finally:
-        json.dumps(odata)
+        # Ensure output is properly flushed
+        sys.stdout.close()
+        
+        
     
 
     

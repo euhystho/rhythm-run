@@ -8,7 +8,7 @@ import 'package:provider/provider.dart';
 import 'utils/theme.dart';
 import 'screens/file_upload_screen_2.dart';
 // import 'apple_music_test.dart';
-import 'spotify_playlist.dart';
+import 'screens/spotify_playlist.dart';
 
 // Welcome Page
 class WelcomePageWidget extends StatelessWidget {
@@ -196,7 +196,7 @@ Future<void> main() async {
 
   runApp(
     ChangeNotifierProvider(
-      create: (_) => SpotifyAPIAuth()..loadTokens(),
+      create: (_) => SpotifyAPI()..loadTokens(),
       child: const MyApp(),
     ),
   );

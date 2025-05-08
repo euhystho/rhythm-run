@@ -67,7 +67,7 @@ Future<Playlist> getSimilarSongs(
                     0.0;
                 if (match >= lowerThreshold) {
                   // Create and return a SimilarSong object
-                  return SimilarSong(song, name, artistName, match);
+                  return SimilarSong(name, artistName, match);
                 }
               } catch (e) {
                 print("Error parsing track: $e");
@@ -82,7 +82,7 @@ Future<Playlist> getSimilarSongs(
   } catch (e) {
     print("Error fetching similar songs: $e");
     // Return a fallback playlist with a single song
-    return Playlist([Song("", "")]);
+    return Playlist([]);
   }
 }
 

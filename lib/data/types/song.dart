@@ -26,7 +26,7 @@ class Playlist {
     tracks.remove(song);
   }
 }
-// Models
+
 class SpotifyPlaylist {
   final String id;
   final String name;
@@ -55,11 +55,11 @@ class SpotifyPlaylist {
     this.tracks = tracks;
   }
 
-  void addSong(StreamableSong song){
+  void addSong(StreamableSong song) {
     tracks?.add(song);
   }
 
-  void removeSong(StreamableSong song){
+  void removeSong(StreamableSong song) {
     tracks?.remove(song);
   }
 }
@@ -82,27 +82,46 @@ class StreamableSong extends Song {
 
   StreamableSong(super.name, super.artist, this.streamID, this.duration);
 
-  factory StreamableSong.fromSpotifyJson(Map<String, dynamic> json){
+  factory StreamableSong.fromSpotifyJson(Map<String, dynamic> json) {
     // Cast the Duration of Miliseconds into the Duration :)
     final duration = Duration(milliseconds: json['track']['duration_ms']);
-    return StreamableSong(json['track']['name'], json['track']['artists'][0]['name'], json['track']['uri'], duration.inSeconds);
+    return StreamableSong(
+      json['track']['name'],
+      json['track']['artists'][0]['name'],
+      json['track']['uri'],
+      duration.inSeconds,
+    );
   }
+
+  factory StreamableSong.fromSpotifySearch(Map<String, dynamic> json, Song song){
+    final duration = Duration(milliseconds: json['duration_ms']);
+    return StreamableSong(
+      json['name'],
+      json['artists'][0]['name'],
+      json['uri'],
+      duration.inSeconds
+    );
+  }
+
 }
 
 class SimilarSong extends Song {
   double match;
-  Song originalSong;
 
-  SimilarSong(this.originalSong, super.name, super.artist, this.match);
+  SimilarSong(super.name, super.artist, this.match);
 
-  get origname => originalSong.name;
-  get origartist => originalSong.artist;
 }
 
 class AnalyzedSong extends Song {
-  int duration;
-  int tempo;
+  final int tempo;
 
-  AnalyzedSong(super.name,super.artist, this.duration, this.tempo);
+  AnalyzedSong(super.name, super.artist, this.tempo);
+
 
 }
+
+class SpotifyAnalyzedSong extends StreamableSong{
+  final int tempo;
+  SpotifyAnalyzedSong(super.name, super.artist, super.streamID, super.duration, this.tempo);
+}
+

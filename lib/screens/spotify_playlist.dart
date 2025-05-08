@@ -5,8 +5,8 @@ import 'package:provider/provider.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:rhythmrun/screens/temp_playlist_screen_spotify.dart';
 import 'package:rhythmrun/utils/theme.dart';
-import 'data/services/music/spotify_interface.dart';
-import 'data/types/song.dart';
+import '../data/services/music/spotify_interface.dart';
+import '../data/types/song.dart';
 
 // Main App
 Future<void> main() async {
@@ -15,7 +15,7 @@ Future<void> main() async {
 
   runApp(
     ChangeNotifierProvider(
-      create: (_) => SpotifyAPIAuth()..loadTokens(),
+      create: (_) => SpotifyAPI()..loadTokens(),
       child: MyApp(),
     ),
   );
@@ -53,16 +53,13 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _loadPlaylists() async {
-    final authProvider = Provider.of<SpotifyAPIAuth>(context, listen: false);
+    final authProvider = Provider.of<SpotifyAPI>(context, listen: false);
     if (authProvider.isAuthenticated) {
       setState(() {
         isLoading = true;
       });
       try {
-        final loaded = await fetchPlaylists(
-          authProvider.accessToken!,
-          authProvider,
-        );
+        final loaded = await authProvider.fetchPlaylists();
         setState(() {
           playlists = loaded;
         });
@@ -82,7 +79,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _importSelectedPlaylists() async {
-    final authProvider = Provider.of<SpotifyAPIAuth>(context, listen: false);
+    final authProvider = Provider.of<SpotifyAPI>(context, listen: false);
     setState(() {
       isLoading = true;
     });
@@ -90,11 +87,7 @@ class _HomeScreenState extends State<HomeScreen> {
       // Fetch tracks for each selected playlist and store in the playlist
       for (final i in selectedIndices) {
         final playlist = playlists![i];
-        final tracks = await fetchTracks(
-          authProvider.accessToken!,
-          playlist.id,
-          authProvider,
-        );
+        final tracks = await authProvider.fetchTracks(playlist.id);
         playlist.setTracks(tracks);
       }
     } catch (e) {
@@ -114,6 +107,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 .expand((index) => playlists![index].tracks ?? [])
                 .cast<StreamableSong>()
                 .toList(),
+            spotifyApi: authProvider, // Pass the SpotifyAPI instance
           ),
         ),
       );
@@ -122,7 +116,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final authProvider = Provider.of<SpotifyAPIAuth>(context);
+    final authProvider = Provider.of<SpotifyAPI>(context);
 
     Widget connectCard = Padding(
       padding: const EdgeInsets.all(16),

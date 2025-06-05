@@ -133,6 +133,4 @@ Have suggestions? We'd love to hear from you:
 
 ---
 
-*Developed with ❤️ by the Hopper Hackers Software Development Team at Ursinus College*
-
-**Run Smarter. Run with Rhythm.**
+*Developed by the Hopper Hackers Software Development Team at Ursinus College*
